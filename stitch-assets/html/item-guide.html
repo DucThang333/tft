@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mystic Archive | Item Guide</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-fixed-dim": "#dfb7ff",
+                        "outline": "#9b8c9c",
+                        "primary": "#dfb7ff",
+                        "tertiary-fixed-dim": "#e9c400",
+                        "on-background": "#e7e0e8",
+                        "secondary-fixed": "#ecdcff",
+                        "inverse-on-surface": "#322f35",
+                        "on-primary-container": "#dbb0ff",
+                        "tertiary-fixed": "#ffe16d",
+                        "on-tertiary-container": "#4c3e00",
+                        "secondary-fixed-dim": "#cfc0e2",
+                        "on-secondary-fixed": "#201730",
+                        "surface-bright": "#3b383e",
+                        "on-primary-fixed-variant": "#6a00b0",
+                        "inverse-surface": "#e7e0e8",
+                        "surface-dim": "#151218",
+                        "on-tertiary-fixed": "#221b00",
+                        "on-secondary-container": "#beafd0",
+                        "tertiary": "#e9c400",
+                        "surface-container-low": "#1d1b20",
+                        "surface-container": "#211f24",
+                        "on-surface-variant": "#d2c1d3",
+                        "surface-tint": "#dfb7ff",
+                        "background": "#151218",
+                        "surface-container-highest": "#373439",
+                        "tertiary-container": "#c9a900",
+                        "outline-variant": "#4e4351",
+                        "on-secondary": "#362c46",
+                        "on-secondary-fixed-variant": "#4d425e",
+                        "surface-container-lowest": "#0f0d12",
+                        "error": "#ffb4ab",
+                        "surface-variant": "#373439",
+                        "primary-container": "#7600c3",
+                        "primary-fixed": "#f1daff",
+                        "on-primary-fixed": "#2d004f",
+                        "secondary": "#cfc0e2",
+                        "on-primary": "#4b007e",
+                        "on-tertiary": "#3a3000",
+                        "on-surface": "#e7e0e8",
+                        "error-container": "#93000a",
+                        "surface-container-high": "#2c292f",
+                        "on-error": "#690005",
+                        "surface": "#151218",
+                        "secondary-container": "#4d425e",
+                        "inverse-primary": "#8821d8",
+                        "on-tertiary-fixed-variant": "#544600",
+                        "on-error-container": "#ffdad6"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(55, 52, 57, 0.6);
+            backdrop-filter: blur(12px);
+        }
+        .text-gradient-primary {
+            background: linear-gradient(135deg, #dfb7ff 0%, #7600c3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #dfb7ff 0%, #7600c3 100%);
+        }
+        .synergy-orb {
+            box-shadow: 0 0 15px rgba(233, 196, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary/30">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#151218] dark:bg-[#151218] border-b border-[#2c292f]/20 shadow-[0_4px_20px_rgba(0,0,0,0.4)] flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-[#dfb7ff] bg-gradient-to-r from-[#dfb7ff] to-[#7600c3] bg-clip-text text-transparent font-headline uppercase">MYSTIC ARCHIVE</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-['Space_Grotesk'] uppercase tracking-wider text-sm text-[#d2c1d3] hover:text-[#dfb7ff] transition-colors" href="#">Champions</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-wider text-sm text-[#dfb7ff] border-b-2 border-[#dfb7ff] pb-1" href="#">Items</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-wider text-sm text-[#d2c1d3] hover:text-[#dfb7ff] transition-colors" href="#">Board</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-wider text-sm text-[#d2c1d3] hover:text-[#dfb7ff] transition-colors" href="#">Meta</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-lg hover:bg-[#2c292f] transition-all duration-300 active:scale-95 text-[#dfb7ff]">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-[#2c292f] transition-all duration-300 active:scale-95 text-[#dfb7ff]">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<main class="pt-24 pb-32 px-4 md:px-8 max-w-7xl mx-auto">
+<!-- Hero Section -->
+<section class="mb-12 relative overflow-hidden rounded-xl bg-surface-container-low p-8 md:p-12">
+<div class="relative z-10 max-w-2xl">
+<span class="text-tertiary font-label font-bold uppercase tracking-widest text-sm mb-2 block">Tactical Grimoire</span>
+<h1 class="text-4xl md:text-6xl font-headline font-bold text-on-surface mb-4 leading-tight">Arcane Arsenal</h1>
+<p class="text-on-surface-variant text-lg leading-relaxed mb-8">Master the flow of magic. Combine basic components to forge legendary artifacts that tip the scales of fate.</p>
+<div class="flex flex-wrap gap-4">
+<button class="px-6 py-3 rounded-lg bg-gradient-primary text-on-primary font-bold shadow-[0_0_20px_rgba(223,183,255,0.3)] hover:shadow-[0_0_25px_rgba(223,183,255,0.5)] transition-all active:scale-95">View Synergies</button>
+<button class="px-6 py-3 rounded-lg border border-outline-variant hover:bg-surface-bright transition-all text-on-surface font-medium">Reset Filters</button>
+</div>
+</div>
+<!-- Decorative image/bg -->
+<div class="absolute right-0 top-0 h-full w-1/2 opacity-30 pointer-events-none">
+<img alt="" class="w-full h-full object-cover" data-alt="abstract swirling purple and gold energy patterns with floating magical crystals in cinematic dark lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSViXnHzhcsmiWA3lvq8LcLqkQesOUb085JTm9xBdubDN_1jEzie7m31Ph-N1pZdU-x1k4B-H84I4Hl4OsZWgn_SGHtOUE0ixrbfEFS76fcBbOaDHcBFA04slPw9u-NzGxvvjmtkNpOCpdRCInxud08BZCPL1IoZv-9FTjf16kX7Nj2JPzboPiTZ9ZTbfqNumAgztYv2jFnGUsQppk1gGChc39p9GQD9f2vPU6ZLvBc4bkUfkl-vfIA4mneTDogqo6l_11MqowvlVc"/>
+</div>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left Column: Base Items -->
+<div class="lg:col-span-4 space-y-6">
+<div class="bg-surface-container-high rounded-xl p-6 shadow-xl relative">
+<div class="flex items-center justify-between mb-6">
+<h2 class="font-headline text-xl font-bold text-primary">Base Components</h2>
+<span class="material-symbols-outlined text-tertiary">diamond</span>
+</div>
+<div class="grid grid-cols-3 gap-3">
+<!-- BF Sword -->
+<div class="group cursor-pointer p-1 rounded-lg border-2 border-primary bg-surface-container-highest shadow-[0_0_15px_rgba(223,183,255,0.2)]">
+<div class="aspect-square rounded-md overflow-hidden relative mb-2">
+<img alt="BF Sword" class="w-full h-full object-cover" data-alt="a glowing blue magical sword handle with ornate engravings on a dark textured background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuznqUBYA6ZTjZ_a5Sc2_hQmioMJOCm42FoUyP9pE7NxhuWuhA3A0_xQ2LuJnT-lbcoc4olh0qO6OsiUHgE0L_pSfK_o4DZ2JV8nWwHJCcQrpYP0payS7hs78tTqUg2hCU6yjQEg1HbygzXuRhTOF2ZghyaiZA43TVdaUWd5g3zL9Unk6Y6c9vfRPamVXxNUv2PaejwoaObapCHCrSx2gGhqgsPAM8X03M3yBoXggokqsZ2b8_pka1mXSJ7nxvfQ0851rD9Me4oWaP"/>
+<div class="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors"></div>
+</div>
+<span class="text-[10px] font-bold uppercase text-center block text-on-surface">B.F. Sword</span>
+</div>
+<!-- Recurve -->
+<div class="group cursor-pointer p-1 rounded-lg border-2 border-transparent hover:border-outline-variant bg-surface-container-low transition-all">
+<div class="aspect-square rounded-md overflow-hidden relative mb-2">
+<img alt="Recurve Bow" class="w-full h-full object-cover" data-alt="a shimmering golden magical bow resting on a surface of dark obsidian glass" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKktL8o8RSHGaijRRpaoD9gv6GarniokFmIdMTeOcML8v7M3IsOMwxBFc3iXw8-_r2bcMM3ehyHnhShK8rXNMHB6DHSdtkpFDoduktTDyqpur8zjmxkhj2V0Qvqw7u7Yp832nuBRPjwOsqXPWU1hNAEvJO4tm1n3FAS8Nj_SuJGCw_zMPX6jEGk0YKpUj2K_sLyH8KULjWxkC4SSstkgZypl8wk9ljFQs7PUJU4yjaNssTG-0ntKG6w5ADQLI0qDfIU_hFrl4FN_wR"/>
+</div>
+<span class="text-[10px] font-bold uppercase text-center block text-on-surface-variant">Recurve Bow</span>
+</div>
+<!-- Rod -->
+<div class="group cursor-pointer p-1 rounded-lg border-2 border-transparent hover:border-outline-variant bg-surface-container-low transition-all">
+<div class="aspect-square rounded-md overflow-hidden relative mb-2">
+<img alt="Needlessly Large Rod" class="w-full h-full object-cover" data-alt="a tall twisted magical wand glowing with purple energy atop a stone pedestal" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyio9yso0t-pYAwVnN3kRkH14N5kDFs7a64LZbSRK9RRrB_EZwgxrt9AV65mMwJKMVb6f4KIe2N5woBXzrcdb-DEo03r30IbqgVbF6JRgqso4Gp1iiHNFagntbasLJj2pazv8mgCNKF-7hUugkUjTNOiPjV8sGBQXSQ0aScdpSg-EFT1popMNp_SLAH0EjpQjWoPAEwrtOyaVvazf_6vYS_2h825nLIk-z6Hbf99BdxFMQ8cmEZ2oJMOA4HFG8eXuN9RM0_bdhTQ3z"/>
+</div>
+<span class="text-[10px] font-bold uppercase text-center block text-on-surface-variant">Lrg Rod</span>
+</div>
+<!-- Tears -->
+<div class="group cursor-pointer p-1 rounded-lg border-2 border-transparent hover:border-outline-variant bg-surface-container-low transition-all">
+<div class="aspect-square rounded-md overflow-hidden relative mb-2">
+<img alt="Tear of the Goddess" class="w-full h-full object-cover" data-alt="a glowing sapphire tear-shaped gem floating in a dark misty void" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXIb1QHKMHIFt2SAgGUMluVSFG9RjI6TdF_glaAzFJCyfGKcg9MapPJUGkVUKVrTGMHpzLzHrZ32QU0-TFQCGrvUNntyqydNn3LmDWuRpcp-TCJvnozxyayr3krGVHs2yYSKutBK6Ozd1ET4_5Nbz2b4rRs3zosB4XL14JE_k8LH04sEiiMpMpm45YbRPQel1h_Pbb160CvF8QIf79HSZ4uBDcpZTbn_R5-KLZE4HUCh93ptcBRw-g9CaN_vARHC6TpW8kJpqWKIiL"/>
+</div>
+<span class="text-[10px] font-bold uppercase text-center block text-on-surface-variant">Tear</span>
+</div>
+<!-- Vest -->
+<div class="group cursor-pointer p-1 rounded-lg border-2 border-transparent hover:border-outline-variant bg-surface-container-low transition-all">
+<div class="aspect-square rounded-md overflow-hidden relative mb-2">
+<img alt="Chain Vest" class="w-full h-full object-crop" data-alt="ornate silver plate armor with intricate engravings on a dark velvet background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJGU_zHEegbTBjSCq-O5qwW53FRwtbjoXyNAl1zcblN9Vyk0ALdJRdbCSF_kdg_L4-cuWTsIU6DAegmg5Tg6JcoI_gZeuhFtZa4Q2f0rzTWk6w1hGv2ngXHi9-1DcefQtaNe6OdIUmwDAnvImuB96fqk1VlXZWUyk6VvnL0-9I3K6v-nEpQjA9HU0fSEj6EbLLNayLJ3QB-B1uZHMVJkyk8N3RZdCg1iJgl_55SvAsIP1186LGS9ATFFhs45cJnxsxaz-2uNBc5eXT"/>
+</div>
+<span class="text-[10px] font-bold uppercase text-center block text-on-surface-variant">Chain Vest</span>
+</div>
+<!-- Cloak -->
+<div class="group cursor-pointer p-1 rounded-lg border-2 border-transparent hover:border-outline-variant bg-surface-container-low transition-all">
+<div class="aspect-square rounded-md overflow-hidden relative mb-2">
+<img alt="Negatron Cloak" class="w-full h-full object-cover" data-alt="a dark flowing hooded cloak with glowing gold embroidery along the edges" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChbLttpjsLo0xHx8SFFcFCFjDu7VQSF8xlkBfcNOjfbcyYwBDwqliMsJ9KUv1b1yS0WGfz4kA4DO68u65X9GUC8HVjuW3XzKluxCbOZaAv9rqjpav4EWduHjK-4hdCVEa7cWnQFQQxedeHVmKTjuDJ8Jm8u22Hpu-_ajeHNgZsXUg1sLisiruVKbdiPN43Uwx0MUgeDluDvu6GOh0qIAPr-XzPxHDjFteX7va0rZ6KwgtMBNZY-QwUhx2UbnxmQsro85basPRKViby"/>
+</div>
+<span class="text-[10px] font-bold uppercase text-center block text-on-surface-variant">Negatron</span>
+</div>
+</div>
+</div>
+<!-- Selected Item Tooltip (Asymmetric Overlay) -->
+<div class="glass-panel rounded-xl p-6 border-t border-outline-variant/20 shadow-2xl transition-all duration-500">
+<div class="flex items-start gap-4 mb-4">
+<div class="w-16 h-16 rounded-lg bg-primary-container p-1 shadow-[0_0_15px_rgba(118,0,195,0.4)]">
+<img alt="Active Item" class="w-full h-full object-cover rounded" data-alt="close up of a legendary glowing sword with runes etched into the blade" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBg08QVcpyNwnxV8fhxTJC0VL6-t7wswW2i5uiPLPI2DHxGX25wsK9jjA7yNJxpv_DjY6A-BD84WlLUAES0n7cXCzH-7eoMO8YRGRBmuyOUWGGP_L6PPrScHMK21OsQibBJUnCZuIFFd7T2KgoWx4jGwpGJjBzyJcSyQzslE_2ATHC3vwLE1Xcg6JB9WWtZCFWmo2ZzxXUw5iu0mk3sOspB4Ed_kffrtt58XTNofcqwhLImCJbnAxa9V7aSdAemOboydzO7gMl6tQaZ"/>
+</div>
+<div>
+<h3 class="font-headline text-lg font-bold text-on-surface">B.F. Sword</h3>
+<p class="text-tertiary font-bold">+10% Attack Damage</p>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm italic mb-4 leading-relaxed">"The heavier the blade, the deeper the silence it leaves behind."</p>
+<div class="space-y-3">
+<div class="flex justify-between text-xs font-bold uppercase text-outline">
+<span>Utility</span>
+<div class="flex gap-1">
+<span class="w-3 h-3 rounded-full bg-tertiary"></span>
+<span class="w-3 h-3 rounded-full bg-tertiary"></span>
+<span class="w-3 h-3 rounded-full bg-outline-variant"></span>
+</div>
+</div>
+<div class="flex justify-between text-xs font-bold uppercase text-outline">
+<span>Offense</span>
+<div class="flex gap-1">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Combination Grid (Bento Grid Style) -->
+<div class="lg:col-span-8">
+<div class="mb-6 flex items-center justify-between">
+<h2 class="font-headline text-2xl font-bold">Crafted Combinations</h2>
+<div class="flex gap-2">
+<span class="px-3 py-1 rounded-full bg-surface-container-highest text-primary text-[10px] font-bold uppercase border border-primary/20">Filtering by B.F. Sword</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Deathblade (Bento Large) -->
+<div class="md:row-span-2 group relative overflow-hidden bg-surface-container-high rounded-xl p-6 border-t border-outline-variant/10 hover:shadow-[0_0_30px_rgba(233,196,0,0.1)] transition-all">
+<div class="flex items-center gap-4 mb-6">
+<div class="relative">
+<div class="w-20 h-20 rounded-xl bg-gradient-to-br from-tertiary to-tertiary-container p-0.5 synergy-orb">
+<img alt="Deathblade" class="w-full h-full object-cover rounded-[0.65rem]" data-alt="a dark demonic curved blade dripping with liquid gold energy in a void" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDt-LJHOHPlVhmILGF5ncakxtjGBaxA-keWhEbuE-yCKlwTevEDThZ-P-j_Cf0nEYIxrXmWzPYHtk6x8Kzrcf_OZ5gqkVd_KiW1HgUwbjJq9RvRsJLnrtwY9tgUDo1RMzJpCp3kuZJQaP5uTn-Y9QxQkCaOzAT5M-OEx0sHJFR-zBvdLBRceQkjry4WueQG81fHynBD2udV4KyCLSLe9-cc8aO91FCWXCS5_6A1vTHWIINT3U_RfitEBlIcTLuXg_5cGJB19T7mUiML"/>
+</div>
+<div class="absolute -bottom-2 -right-2 flex">
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-high bg-primary-container overflow-hidden">
+<img alt="BF" data-alt="sword icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDU-rYZIAtL_5WYz74KxPkMuOWklNcHjNHY1D7FVlTcu4Mcg_kV4tBh86bZJFw4ybQCpD2LT4Zqv1S_pLL1mCi-LnO5MATTlDJaCeGRL3b_95kedfAhyjMsEBUEb9WfEMAqrlFIQXbLb6mcfNpIsekUFV3BNo5QbSNygyBTZenR3k1HFwul5uzef5TSkaT0Dc5HInjqY2cC1sbyLXVTLm_wUNs5G_kzEGJf9S9Mzj8HtwpXey-5jxQRumMlIPG3fv5Yh4M9Zj_eIAcL"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-high bg-primary-container -ml-3 overflow-hidden">
+<img alt="BF" data-alt="sword icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDN5rKWXpzX2uyOqo5lj_pXmelkX1Enu6l9y78D3nq_FWqsoNmhkfw14OcYOgPiMR0rAshfl5WeqG8Eoc6W3V2rhjHv5zR1TeubLe6bsluvFedfrJ1YfkqmVgz-zCPfKxfoAb7w5I6-t2Sd9apSJByM9wBDATULwsmJ2EShiwk-RrIPIWV_raUNF7QJ0IfVYPprXrEF26pi4RqSON2sb3HxE0IkSdU3qh02lad5m4PNNaOUi3YYdt6QXmcdPjIcVp6rvG4dRdYKD6Is"/>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-2xl font-headline font-bold text-on-surface">Deathblade</h3>
+<div class="flex gap-2 mt-1">
+<span class="text-[10px] font-bold px-2 py-0.5 bg-tertiary text-on-tertiary rounded uppercase">Core AD</span>
+<span class="text-[10px] font-bold px-2 py-0.5 bg-primary-container text-on-primary-container rounded uppercase">Tier 1</span>
+</div>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm mb-6 leading-relaxed">Provides a massive amount of Attack Damage that scales with the wearer's star level. Perfect for marksmen.</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container rounded-lg p-3">
+<span class="text-[10px] font-bold text-tertiary uppercase block mb-1">Combat Bonus</span>
+<span class="text-xl font-bold text-on-surface">+55% AD</span>
+</div>
+<div class="bg-surface-container rounded-lg p-3">
+<span class="text-[10px] font-bold text-tertiary uppercase block mb-1">Unique Effect</span>
+<span class="text-xs font-medium text-on-surface-variant leading-tight">1.5% bonus damage per stack</span>
+</div>
+</div>
+</div>
+<!-- Infinity Edge -->
+<div class="group relative bg-surface-container-high rounded-xl p-5 border-t border-outline-variant/10 hover:shadow-lg transition-all">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-14 h-14 rounded-lg bg-surface-container-highest overflow-hidden border border-primary/20">
+<img alt="Infinity Edge" class="w-full h-full object-cover" data-alt="a crystalline glass sword reflecting rainbow light from its sharp edges" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGaYrastJn1mjuA7TKmdYWRzFONYXfrv19yyZlXt_0KssJorDWeu_0Qdkhdj5ncfTh6OLZ5WsD6TXWRs_LVvpzFj6FjoFcb1oXSMWDJZIJlt5_NI-5FFPy5hOnWkQuDL8WQQwpTe0tDVuzRGSapgG0_qXNGdS6FuN9Olz_fJtmnPCHcOWMT0zS1ZLlTI0sKwiHVDgCTcGUVXJwcrw6vWi1LUppo5outlL93uhS3Qp3SzxX3Ef-UuKYesUXnclvyno-K2S1AVlynnq9"/>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface">Infinity Edge</h4>
+<p class="text-[10px] text-primary font-bold uppercase tracking-tight">Sword + Glove</p>
+</div>
+</div>
+<p class="text-xs text-on-surface-variant line-clamp-2">Grants 15% Bonus Attack Damage and 15% Critical Strike Chance. Abilities can critically strike.</p>
+</div>
+<!-- Bloodthirster -->
+<div class="group relative bg-surface-container-high rounded-xl p-5 border-t border-outline-variant/10 hover:shadow-lg transition-all">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-14 h-14 rounded-lg bg-surface-container-highest overflow-hidden border border-primary/20">
+<img alt="Bloodthirster" class="w-full h-full object-cover" data-alt="a dark crimson blade glowing with a malevolent red aura in a library of ancient books" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvp1OLhkXw7ov4rZ-SWD8gHuvtdhjwdFReQHqdcZPU6P48Ia6s8tqSkjcGWKiEnOZ_rcW-wtJmIbimBCoqcsa4s6Oho6NH6okr2FKVicUe07im6RhrhBuo4W_akdBtkP0Xs7VjdOZ78J7TnjYF5Cb9ur9ob3xvjVMukOnvOLCTQol4sCkDE9Qp6vj1lxqhwI424gG9YtJ2ZeXzPBa3j_w8Rmly9viuw7GaAL6SeUmMumjUK1c8otU126wIoG6vDDGwC-6S5KwDdrz5"/>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface">Bloodthirster</h4>
+<p class="text-[10px] text-primary font-bold uppercase tracking-tight">Sword + Cloak</p>
+</div>
+</div>
+<p class="text-xs text-on-surface-variant line-clamp-2">Grant 20% Omnivamp. Once per combat at 40% HP, gain a 25% max HP shield.</p>
+</div>
+<!-- Giant Slayer (Wide Layout) -->
+<div class="md:col-span-2 group relative bg-surface-container-high rounded-xl p-5 border-t border-outline-variant/10 hover:shadow-lg transition-all flex items-center justify-between gap-6">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-lg bg-surface-container-highest overflow-hidden border border-primary/20">
+<img alt="Giant Slayer" class="w-full h-full object-cover" data-alt="massive jagged silver blade resting on a dragon skull in a dark cave" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC76NReAUSa4gvXYoiwYLkjmRb3QL2E9Ac431jJBPyCOLzI3uL0lSPsqba4RpvUzxd752fek3Ur1DFJPsuQep-cRDVTZveIDCS_aSusngfQgNpItzPWHE13nEYXfFGK2Szr7f93qtNvAuD-Yg_nux8GcY8ZZMzImxPn6z3psLyduzAnFJlBZWC0KoS_mB4WfyiP_yMuTM02vPrABKmGTxgUcmP3D351DeeduUxupBW8DM-eXCNui8I6l1MtIVe-9tQBaKesiaCrQE2O"/>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface text-lg">Giant Slayer</h4>
+<p class="text-xs text-on-surface-variant">Sword + Bow • Increases damage by 25% against enemies over 1600 HP.</p>
+</div>
+</div>
+<div class="hidden md:flex gap-4">
+<div class="text-center">
+<span class="block text-[10px] text-tertiary font-bold uppercase">AD</span>
+<span class="text-lg font-bold text-on-surface">+15%</span>
+</div>
+<div class="text-center">
+<span class="block text-[10px] text-tertiary font-bold uppercase">AS</span>
+<span class="text-lg font-bold text-on-surface">+10%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-4 pb-safe md:hidden bg-[#151218]/90 backdrop-blur-xl border-t border-[#dfb7ff]/10 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] z-50 rounded-t-lg">
+<a class="flex flex-col items-center justify-center text-[#d2c1d3]/60 hover:text-[#dfb7ff]" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase">Units</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#dfb7ff] bg-[#2c292f] rounded-xl px-4 py-1 shadow-[0_0_10px_rgba(223,183,255,0.2)]" href="#">
+<span class="material-symbols-outlined">shield_with_heart</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase">Items</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#d2c1d3]/60 hover:text-[#dfb7ff]" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase">Builder</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#d2c1d3]/60 hover:text-[#dfb7ff]" href="#">
+<span class="material-symbols-outlined">trophy</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase">Meta</span>
+</a>
+</nav>
+<!-- Floating Action Button -->
+<div class="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-40">
+<button class="w-14 h-14 rounded-full bg-gradient-primary text-on-primary shadow-2xl flex items-center justify-center active:scale-90 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_shopping_cart</span>
+</button>
+</div>
+</body></html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mystic Archive | Meta Compositions</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed-dim": "#dfb7ff",
+              "outline": "#9b8c9c",
+              "primary": "#dfb7ff",
+              "tertiary-fixed-dim": "#e9c400",
+              "on-background": "#e7e0e8",
+              "secondary-fixed": "#ecdcff",
+              "inverse-on-surface": "#322f35",
+              "on-primary-container": "#dbb0ff",
+              "tertiary-fixed": "#ffe16d",
+              "on-tertiary-container": "#4c3e00",
+              "secondary-fixed-dim": "#cfc0e2",
+              "on-secondary-fixed": "#201730",
+              "surface-bright": "#3b383e",
+              "on-primary-fixed-variant": "#6a00b0",
+              "inverse-surface": "#e7e0e8",
+              "surface-dim": "#151218",
+              "on-tertiary-fixed": "#221b00",
+              "on-secondary-container": "#beafd0",
+              "tertiary": "#e9c400",
+              "surface-container-low": "#1d1b20",
+              "surface-container": "#211f24",
+              "on-surface-variant": "#d2c1d3",
+              "surface-tint": "#dfb7ff",
+              "background": "#151218",
+              "surface-container-highest": "#373439",
+              "tertiary-container": "#c9a900",
+              "outline-variant": "#4e4351",
+              "on-secondary": "#362c46",
+              "on-secondary-fixed-variant": "#4d425e",
+              "surface-container-lowest": "#0f0d12",
+              "error": "#ffb4ab",
+              "surface-container-high": "#2c292f",
+              "on-error": "#690005",
+              "surface": "#151218",
+              "secondary-container": "#4d425e",
+              "inverse-primary": "#8821d8",
+              "on-tertiary-fixed-variant": "#544600",
+              "on-error-container": "#ffdad6"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .glass-panel {
+            background: rgba(55, 52, 57, 0.6);
+            backdrop-filter: blur(12px);
+        }
+        .text-gradient-primary {
+            background: linear-gradient(135deg, #dfb7ff 0%, #7600c3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .orb-glow {
+            box-shadow: 0 0 15px rgba(223, 183, 255, 0.2);
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f0d12;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4e4351;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-primary">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#151218] dark:bg-[#151218] border-b border-[#2c292f]/20 shadow-[0_4px_20px_rgba(0,0,0,0.4)] flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-[#dfb7ff] bg-gradient-to-r from-[#dfb7ff] to-[#7600c3] bg-clip-text text-transparent font-headline uppercase tracking-wider">MYSTIC ARCHIVE</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-['Space_Grotesk'] uppercase tracking-wider text-sm text-[#d2c1d3] hover:text-[#dfb7ff] transition-colors active:scale-95 duration-150" href="#">Champions</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-wider text-sm text-[#d2c1d3] hover:text-[#dfb7ff] transition-colors active:scale-95 duration-150" href="#">Items</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-wider text-sm text-[#d2c1d3] hover:text-[#dfb7ff] transition-colors active:scale-95 duration-150" href="#">Board</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-wider text-sm text-[#dfb7ff] border-b-2 border-[#dfb7ff] pb-1 active:scale-95 duration-150" href="#">Meta</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-lg hover:bg-[#2c292f] transition-all duration-300 active:scale-95 text-[#dfb7ff]">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-[#2c292f] transition-all duration-300 active:scale-95 text-[#dfb7ff]">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<main class="pt-24 pb-32 px-4 md:px-8 max-w-7xl mx-auto">
+<!-- Hero Title Section -->
+<section class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<span class="text-tertiary font-label text-sm uppercase tracking-[0.2em] font-bold block mb-2">Live Patch Analysis</span>
+<h1 class="text-5xl md:text-7xl font-headline font-bold tracking-tighter text-on-background">Meta Compositions</h1>
+</div>
+<div class="flex gap-3">
+<div class="bg-surface-container-high px-4 py-2 rounded-lg border-t border-outline-variant/20">
+<span class="text-on-surface-variant text-xs uppercase font-bold tracking-widest block">Server</span>
+<span class="text-primary font-headline font-bold">NORTH AMERICA</span>
+</div>
+<div class="bg-surface-container-high px-4 py-2 rounded-lg border-t border-outline-variant/20">
+<span class="text-on-surface-variant text-xs uppercase font-bold tracking-widest block">Updated</span>
+<span class="text-tertiary font-headline font-bold">2H AGO</span>
+</div>
+</div>
+</section>
+<!-- S-Tier Section -->
+<div class="mb-8 flex items-center gap-4">
+<span class="h-px flex-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent"></span>
+<h2 class="font-headline text-3xl font-bold italic tracking-tighter text-primary">S-Tier <span class="text-on-surface-variant not-italic font-normal opacity-50 ml-2">Domination</span></h2>
+<span class="h-px flex-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent"></span>
+</div>
+<div class="grid grid-cols-1 gap-8 mb-16">
+<!-- S-Tier Card 1 -->
+<div class="group relative overflow-hidden bg-surface-container-low rounded-lg border-t border-outline-variant/15 hover:bg-surface-container transition-all duration-500 shadow-xl">
+<div class="absolute right-0 top-0 w-1/3 h-full opacity-20 group-hover:opacity-30 transition-opacity pointer-events-none">
+<img class="w-full h-full object-cover grayscale" data-alt="cinematic portrait of a celestial ethereal champion with glowing purple eyes and ornate mystical armor in a dark void" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgHOjG2Feb4EGzkh3meWSoRO61Ov7fMFqCv3U6TTiTDlBuCCoRlNJZ_bae9B4YqNLosAcuTz5H_A2wyrxVe5BPhwIHn2EL2vq2CuWw_BQJHV2koi9LW_ENsvi4ORAaqWfWOOw8RrugHHoLWvLDuJTEf0rCRZxEw8sImZ7H7hya4xv6SpEI8cZVIHtt4Kd9gsm-Zrtdkq2Z4IwCJ6BE58uSVNP42bgAjEVg8ZYJNetwgBX7EVvRthtBdZ5ehcEe8bQXW5Yxk5ifriHu"/>
+</div>
+<div class="p-6 md:p-8 relative z-10">
+<div class="flex flex-col lg:flex-row gap-8">
+<!-- Comp Identity -->
+<div class="lg:w-1/3">
+<div class="flex items-center gap-3 mb-4">
+<span class="bg-primary text-on-primary font-headline font-black px-3 py-1 text-xl rounded-lg italic">S</span>
+<h3 class="text-3xl font-headline font-bold leading-none">Arcane Sentinel</h3>
+</div>
+<div class="flex flex-wrap gap-2 mb-6">
+<div class="flex items-center gap-1.5 bg-secondary-container px-3 py-1 rounded-full text-on-secondary-container text-xs font-bold uppercase">
+<span class="w-2 h-2 rounded-full bg-primary orb-glow"></span> 6 Arcanist
+                                </div>
+<div class="flex items-center gap-1.5 bg-secondary-container px-3 py-1 rounded-full text-on-secondary-container text-xs font-bold uppercase">
+<span class="w-2 h-2 rounded-full bg-tertiary orb-glow"></span> 2 Warden
+                                </div>
+</div>
+<!-- Perf Graph -->
+<div class="bg-surface-container-lowest p-4 rounded-xl mb-6">
+<div class="flex justify-between items-end h-16 gap-1 mb-2">
+<div class="w-full bg-primary-container/20 rounded-t-sm h-[30%]"></div>
+<div class="w-full bg-primary-container/40 rounded-t-sm h-[45%]"></div>
+<div class="w-full bg-primary-container/60 rounded-t-sm h-[70%]"></div>
+<div class="w-full bg-primary-container/80 rounded-t-sm h-[85%]"></div>
+<div class="w-full bg-primary rounded-t-sm h-[100%] shadow-[0_0_10px_#dfb7ff]"></div>
+</div>
+<div class="flex justify-between text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
+<span>Early</span>
+<span>Mid</span>
+<span>Late</span>
+</div>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Difficulty</span>
+<div class="flex gap-1">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="w-2 h-2 rounded-full bg-tertiary/20"></span>
+</div>
+</div>
+</div>
+<!-- Champions Grid -->
+<div class="lg:w-2/3">
+<div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
+<!-- Champion Item -->
+<div class="relative group/champ cursor-pointer">
+<div class="w-full aspect-square rounded-lg bg-surface-container-highest overflow-hidden border-2 border-primary/40 group-hover/champ:border-primary transition-all duration-300">
+<img class="w-full h-full object-cover transform group-hover/champ:scale-110 transition-transform duration-500" data-alt="close up of a legendary warrior champion with glowing energy swirling around their crystal staff and crown" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpqPDIHx2AHHLaQjk0KpYETDCKXYcrgCT3epe4_5caD07iCMaKl3byMsY3Wrg2Z8reL0ZOBr4z1_DAPqtyfEkX8c1F1gUEQrfaZPjbweRT4wjSYTGfDYp68j4HGw8n9znGO_Uq82CjeVfe2z6kMxLbdaL3BClMUhvoRsoUhq-wd4Q9wFmPGeSq-IbdV7INfSUtwmGnKP63mXX6adkzuxfvxtsgYWrauGJQcYKx2wh-LrUlptnoycTnQbo85tVri6MPL1wStI8au8BZ"/>
+</div>
+<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 flex gap-0.5">
+<div class="w-5 h-5 bg-surface-container-highest border border-primary/30 rounded flex items-center justify-center p-0.5">
+<span class="material-symbols-outlined text-[12px]" data-icon="shield_with_heart" style="font-variation-settings: 'FILL' 1;">shield_with_heart</span>
+</div>
+<div class="w-5 h-5 bg-surface-container-highest border border-primary/30 rounded flex items-center justify-center p-0.5">
+<span class="material-symbols-outlined text-[12px]" data-icon="bolt" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+</div>
+<p class="text-[10px] font-bold text-center mt-3 uppercase tracking-tighter text-on-surface-variant">Ryze</p>
+</div>
+<!-- Repeat for other champs -->
+<div class="relative group/champ cursor-pointer">
+<div class="w-full aspect-square rounded-lg bg-surface-container-highest overflow-hidden border-2 border-outline-variant/30 hover:border-primary/50 transition-all">
+<img class="w-full h-full object-cover" data-alt="a powerful mage champion casting a shimmering indigo spell with detailed arcane runes floating in the air" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaOHkq4TbVdCApnAQCau87wuKOVL_assvCUvL2WQfbFSJBaMYFU35-1ybIt_b2nm5EX8z2VrkMSh-ZHWCWLKtBE7kkewiXBVVhLZNJ45rfGD0q9Y9oqe4ClW2Xr1yhzFEVvJrYiT1x9zFO5ARd32L-YVTaRlh99rROmhakL9qMdZtIM4HWekmQ7I_8edcrgqwqPYbQSi4xImLRgWuy_kgEVKUuvOc_q4HlL6VR8acReAocl7tH4z-rIfn8qQgkqxbz9TZ4finYTUi4"/>
+</div>
+<p class="text-[10px] font-bold text-center mt-3 uppercase tracking-tighter text-on-surface-variant">Lulu</p>
+</div>
+<div class="relative group/champ cursor-pointer">
+<div class="w-full aspect-square rounded-lg bg-surface-container-highest overflow-hidden border-2 border-outline-variant/30 hover:border-primary/50 transition-all">
+<img class="w-full h-full object-cover" data-alt="a heavy armored tank champion with a massive glowing shield standing amidst a battlefield at night" src="https://lh3.googleusercontent.com/aida-public/AB6AXuASn1yuF6uG-tCKPQqiZy3k3k-H-uhlJrr6p3-j1xfdQ_OBeQrvT3U7TXaZkw8h9h3SKtnMRDhRsyIFRJi0ywnOwbBu_dvn0hPlnWbeZKCAOkWmZlt-2JzfBTZB4E7Q-kUghrXBKjDq46VGZa6yOqvhbEOWRJuyrgmDNPzDXrLW4VwAYs_5ahrgbUz-IxR_LUdUFNsmOmeMFaQCTHI7IIMJgiGls4yjSAAcQ7qp0eaR4XjPUdNVA_zHmsnQcCtXSC4u7cFSNnovYG9U"/>
+</div>
+<p class="text-[10px] font-bold text-center mt-3 uppercase tracking-tighter text-on-surface-variant">Galio</p>
+</div>
+<div class="relative group/champ cursor-pointer">
+<div class="w-full aspect-square rounded-lg bg-surface-container-highest overflow-hidden border-2 border-outline-variant/30 hover:border-primary/50 transition-all">
+<img class="w-full h-full object-cover" data-alt="a fast ninja champion with dual glowing daggers in a high-speed dynamic action pose" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2JCk8S3URperKO3kuCFXNWSOmfCeS6m9jxs2Y9rKfk9BqglmMcX6YXh1dpS85vzkRIPrUMb5rA52ULG5vPOV_7Td5Z5wqW-HcUAUvIKeyI7krEaDPjx5JJXnXNwVEy4HOwTQQ7mW8Vyiu8T_zn_JHmyT2aHQl9d884i7dCx_Rc6JUrlanY44F_KsIJAUL8tCkpvxCCnyhT4I0S4Csv6T2DxtwYk2OYGJOZssogJjqlhcX5WyYehhHVstiCBft8jsPqTwobX0uiQhX"/>
+</div>
+<p class="text-[10px] font-bold text-center mt-3 uppercase tracking-tighter text-on-surface-variant">Shen</p>
+</div>
+<div class="relative group/champ cursor-pointer">
+<div class="w-full aspect-square rounded-lg bg-surface-container-highest overflow-hidden border-2 border-outline-variant/30 hover:border-primary/50 transition-all">
+<img class="w-full h-full object-cover" data-alt="a dark sorceress champion with violet energy flames rising from her hands and a mystical crown" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCr7BEAE7weI8ydxfeHoA5-vmhEeEH6bOq6TVyVY1YSP4ZKW4NCVqrn5wWEQP_2yKYUkhZYWPSpZx3_1l7Ejt12JqurAKzZks3CRVbyDV_fARx7O777GAx1QcTtm3zUjMnCekLjelXggUyZI__lmCyb_gUFOgxde2coVJJ1JEfoOjwlEu6STOHiLNYGHo5eYiIP-ZZ9EBLanVQnyoVlP1NGiQAf9J7-yf9NyQKqAu-dARm4mhcN8caSHduYKTjkVUyoFao2yn9zRR18"/>
+</div>
+<p class="text-[10px] font-bold text-center mt-3 uppercase tracking-tighter text-on-surface-variant">Morgana</p>
+</div>
+</div>
+<div class="mt-8 pt-8 border-t border-outline-variant/10 flex flex-wrap items-center gap-6">
+<div class="flex items-center gap-4">
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Core Strategy</span>
+<p class="text-sm text-on-surface-variant/80 italic">"Fast 8 to stabilize Ryze 2, prioritize Blue Buff &amp; Archangel's Staff."</p>
+</div>
+<div class="ml-auto flex gap-4">
+<button class="bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold px-4 py-2 rounded transition-all active:scale-95">VIEW GUIDE</button>
+<button class="bg-primary-container text-white text-xs font-bold px-4 py-2 rounded shadow-lg shadow-primary-container/20 active:scale-95">COPY BOARD</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- A-Tier Section -->
+<div class="mb-8 flex items-center gap-4">
+<span class="h-px flex-1 bg-gradient-to-r from-transparent via-tertiary/20 to-transparent"></span>
+<h2 class="font-headline text-3xl font-bold italic tracking-tighter text-tertiary">A-Tier <span class="text-on-surface-variant not-italic font-normal opacity-50 ml-2">Consistent</span></h2>
+<span class="h-px flex-1 bg-gradient-to-r from-transparent via-tertiary/20 to-transparent"></span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- A-Tier Card 1 -->
+<div class="bg-surface-container-low p-6 rounded-lg border-t border-outline-variant/15 hover:translate-y-[-4px] transition-transform duration-300">
+<div class="flex justify-between items-start mb-6">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="text-tertiary font-headline font-black text-xl italic">A</span>
+<h3 class="text-xl font-headline font-bold">Spectral Hunter</h3>
+</div>
+<div class="flex gap-2">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase bg-surface-container-highest px-2 py-0.5 rounded">4 Ghost</span>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase bg-surface-container-highest px-2 py-0.5 rounded">2 Sniper</span>
+</div>
+</div>
+<div class="text-right">
+<div class="text-[10px] font-bold text-on-surface-variant mb-1 uppercase tracking-widest">Difficulty</div>
+<div class="flex gap-1 justify-end">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary/20"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary/20"></span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 mb-6">
+<div class="flex -space-x-3">
+<img class="w-12 h-12 rounded-full border-2 border-surface-container object-cover" data-alt="portrait of a ghost hunter champion with ethereal green energy eyes and jagged silver blades" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCytxYJeVVC-jMxRdWs8iPXU6ZIkV7pcdphT7Bp9rFInNlj6Q7zyuLXferxpQG_qvwqgB0tnoaNNIFzb7YCUmgIMeCNRgxsaCJrm1Y2f60T9P1UQVxWH3NEmIk1zDMHUWfN_hve33_vYCwF4ch7KBIe5eHA5k8JvXqjIlDPiUqGqEBHb38Yi0207tcGk_0F98qbZyy8jBJgth_decog3Pud9vCAU200tMy3QUzTTQvO7Mu6QWdx_FS6NDAdy1I-gQaW2rbnGJUSESYm"/>
+<img class="w-12 h-12 rounded-full border-2 border-surface-container object-cover" data-alt="portrait of an archer champion with a long glowing bow and mysterious hood" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAo9G5qGuPPnKc6HCQCVz8qGDQASkxH4hm1YQcIbDpGHsCdhAkJBthY0T7um71RouYIc6vGJw_E3Gv5vTVoT4F-Klsu5udUCk-FVFHRhnbLoDr4Jc0fssOR7lrwpy4ajxlNkPDUnFQoKUkQfwItL0D-3uje-PBUkbO60eErUU9bgJBbKULWJpVlc_C26pxH5l7CQw5MUXzVu8jG_JLWN5WI50yz5pTbyFjqnwAmDQrTjqWtQduVmv2Vr9qgox8RfEtiaHUtVbpoR7_E"/>
+<div class="w-12 h-12 rounded-full border-2 border-surface-container bg-surface-container-highest flex items-center justify-center text-xs font-bold text-on-surface-variant">+6</div>
+</div>
+<div class="h-8 w-px bg-outline-variant/20 mx-2"></div>
+<div class="flex gap-2">
+<div class="w-8 h-8 rounded bg-surface-container-highest border border-outline-variant/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" data-icon="swords" style="font-variation-settings: 'FILL' 1;">swords</span>
+</div>
+<div class="w-8 h-8 rounded bg-surface-container-highest border border-outline-variant/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" data-icon="target" style="font-variation-settings: 'FILL' 1;">target</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest h-1.5 w-full rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[65%]"></div>
+</div>
+<div class="flex justify-between mt-2">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Win Rate: 52.4%</span>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Top 4: 58%</span>
+</div>
+</div>
+<!-- A-Tier Card 2 -->
+<div class="bg-surface-container-low p-6 rounded-lg border-t border-outline-variant/15 hover:translate-y-[-4px] transition-transform duration-300">
+<div class="flex justify-between items-start mb-6">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="text-tertiary font-headline font-black text-xl italic">A</span>
+<h3 class="text-xl font-headline font-bold">Fated Behemoth</h3>
+</div>
+<div class="flex gap-2">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase bg-surface-container-highest px-2 py-0.5 rounded">5 Fated</span>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase bg-surface-container-highest px-2 py-0.5 rounded">4 Behemoth</span>
+</div>
+</div>
+<div class="text-right">
+<div class="text-[10px] font-bold text-on-surface-variant mb-1 uppercase tracking-widest">Difficulty</div>
+<div class="flex gap-1 justify-end">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 mb-6">
+<div class="flex -space-x-3">
+<img class="w-12 h-12 rounded-full border-2 border-surface-container object-cover" data-alt="a heavy armored tank champion with a massive glowing shield" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaLXUJgeotLL1itniN6TMmR9zaBT_0GIdN_gPLk6pyrIPh0hC4pE7UUIhdJZAzMy6YRtHyf3pxBIyuPBePoF4sUHglN7DQSWXtDs5-x93ZXDSZvVdvbfxl8zWOHvn4b8rQ1KL65t7E3HzJPP7exRWVhzhY0w1KyiKaMwmQty39LD4wGX915YSNgPDGe1WxZdG7XZ7rvpGT9qAUGx4DvU7XGAGQKue5B0bVvDlvRhnF7CIL6Vq9O5HgrVK9WrhGYvlvsKjn2vz0C1zY"/>
+<img class="w-12 h-12 rounded-full border-2 border-surface-container object-cover" data-alt="cinematic portrait of a celestial ethereal champion" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrgT1S1mWC49Zl4TBq79N7PyZuhXTVQ1Ks4eVQ79XK7FFH_X-Ku7bit6WfHks6IWg7x9jQqI2TLHb7uUo3R4tV9DGCXR33bTrFRa58wLuCAkMSHr3wXFJeab-nqRFnECFvdX741aPX05SaPTqksAVyHGU2SrSjXxSgIhDlN8xLTXnszFYn9_dCCFV3tSzAx9TOfRE4ulCkuumduKfEIGU1zhdvrckHQ6bhdn-5i3sSOk8eF8SWlWnpRy4J2qjac8oEgeGEiJqVhWcT"/>
+<div class="w-12 h-12 rounded-full border-2 border-surface-container bg-surface-container-highest flex items-center justify-center text-xs font-bold text-on-surface-variant">+5</div>
+</div>
+<div class="h-8 w-px bg-outline-variant/20 mx-2"></div>
+<div class="flex gap-2">
+<div class="w-8 h-8 rounded bg-surface-container-highest border border-outline-variant/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" data-icon="shield" style="font-variation-settings: 'FILL' 1;">shield</span>
+</div>
+<div class="w-8 h-8 rounded bg-surface-container-highest border border-outline-variant/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest h-1.5 w-full rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[48%]"></div>
+</div>
+<div class="flex justify-between mt-2">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Win Rate: 49.8%</span>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Top 4: 54%</span>
+</div>
+</div>
+</div>
+<!-- Meta Trends Bento -->
+<div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 bg-surface-container p-6 rounded-lg border-t border-outline-variant/15 flex flex-col justify-between overflow-hidden relative">
+<div class="relative z-10">
+<h4 class="text-xs font-bold text-tertiary uppercase tracking-widest mb-4">Meta Insight</h4>
+<p class="text-2xl font-headline font-bold text-on-background mb-4">Warden Frontlines are seeing a <span class="text-primary">+12% surge</span> in high-ELO placement.</p>
+<p class="text-on-surface-variant text-sm max-w-md">Prioritize defensive itemization over pure offensive tempo in the current 14.12 patch environment.</p>
+</div>
+<div class="absolute right-[-10%] bottom-[-10%] w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+</div>
+<div class="bg-primary-container p-6 rounded-lg flex flex-col justify-center items-center text-center">
+<span class="material-symbols-outlined text-4xl text-primary mb-4" data-icon="auto_awesome">auto_awesome</span>
+<h4 class="text-lg font-headline font-bold text-white mb-2">Team Builder</h4>
+<p class="text-white/70 text-sm mb-6">Create your own off-meta strategies and share with the community.</p>
+<button class="bg-white text-primary-container font-bold text-xs px-6 py-3 rounded uppercase tracking-wider hover:bg-opacity-90 transition-all">Start Crafting</button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-4 pb-safe md:hidden bg-[#151218]/90 backdrop-blur-xl border-t border-[#dfb7ff]/10 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] z-50 rounded-t-lg">
+<a class="flex flex-col items-center justify-center text-[#d2c1d3]/60 hover:text-[#dfb7ff] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase mt-1">Units</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#d2c1d3]/60 hover:text-[#dfb7ff] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="shield_with_heart">shield_with_heart</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase mt-1">Items</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#d2c1d3]/60 hover:text-[#dfb7ff] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase mt-1">Builder</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#dfb7ff] bg-[#2c292f] rounded-xl px-4 py-1 shadow-[0_0_10px_rgba(223,183,255,0.2)] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="Trophy">trophy</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase mt-1">Meta</span>
+</a>
+</nav>
+</body></html>

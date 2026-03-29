@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed-dim": "#dfb7ff",
+              "outline": "#9b8c9c",
+              "primary": "#dfb7ff",
+              "tertiary-fixed-dim": "#e9c400",
+              "on-background": "#e7e0e8",
+              "secondary-fixed": "#ecdcff",
+              "inverse-on-surface": "#322f35",
+              "on-primary-container": "#dbb0ff",
+              "tertiary-fixed": "#ffe16d",
+              "on-tertiary-container": "#4c3e00",
+              "secondary-fixed-dim": "#cfc0e2",
+              "on-secondary-fixed": "#201730",
+              "surface-bright": "#3b383e",
+              "on-primary-fixed-variant": "#6a00b0",
+              "inverse-surface": "#e7e0e8",
+              "surface-dim": "#151218",
+              "on-tertiary-fixed": "#221b00",
+              "on-secondary-container": "#beafd0",
+              "tertiary": "#e9c400",
+              "surface-container-low": "#1d1b20",
+              "surface-container": "#211f24",
+              "on-surface-variant": "#d2c1d3",
+              "surface-tint": "#dfb7ff",
+              "background": "#151218",
+              "surface-container-highest": "#373439",
+              "tertiary-container": "#c9a900",
+              "outline-variant": "#4e4351",
+              "on-secondary": "#362c46",
+              "on-secondary-fixed-variant": "#4d425e",
+              "surface-container-lowest": "#0f0d12",
+              "error": "#ffb4ab",
+              "surface-variant": "#373439",
+              "primary-container": "#7600c3",
+              "primary-fixed": "#f1daff",
+              "on-primary-fixed": "#2d004f",
+              "secondary": "#cfc0e2",
+              "on-primary": "#4b007e",
+              "on-tertiary": "#3a3000",
+              "on-surface": "#e7e0e8",
+              "error-container": "#93000a",
+              "surface-container-high": "#2c292f",
+              "on-error": "#690005",
+              "surface": "#151218",
+              "secondary-container": "#4d425e",
+              "inverse-primary": "#8821d8",
+              "on-tertiary-fixed-variant": "#544600",
+              "on-error-container": "#ffdad6"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .glass-panel {
+            background: rgba(55, 52, 57, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .champion-card-glow:hover {
+            box-shadow: 0 0 20px rgba(223, 183, 255, 0.15);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary/30">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#151218] dark:bg-[#151218] border-b border-[#2c292f]/20 shadow-[0_4px_20px_rgba(0,0,0,0.4)] flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-[#dfb7ff] bg-gradient-to-r from-[#dfb7ff] to-[#7600c3] bg-clip-text text-transparent font-headline uppercase">MYSTIC ARCHIVE</span>
+<div class="hidden md:flex gap-6 items-center h-full">
+<a class="font-['Space_Grotesk'] uppercase tracking-wider text-sm text-[#dfb7ff] border-b-2 border-[#dfb7ff] pb-1" href="#">Champions</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-wider text-sm text-[#d2c1d3] hover:text-[#dfb7ff] transition-colors" href="#">Items</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-wider text-sm text-[#d2c1d3] hover:text-[#dfb7ff] transition-colors" href="#">Board</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-wider text-sm text-[#d2c1d3] hover:text-[#dfb7ff] transition-colors" href="#">Meta</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center bg-surface-container-highest/50 px-3 py-1.5 rounded-lg border-b-2 border-outline-variant focus-within:border-tertiary transition-all">
+<span class="material-symbols-outlined text-on-surface-variant text-sm mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm text-on-surface placeholder-on-surface-variant/50 w-48" placeholder="Search Archives..." type="text"/>
+</div>
+<button class="p-2 text-[#d2c1d3] hover:bg-[#2c292f] transition-all duration-300 rounded-lg active:scale-95">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="p-2 text-[#d2c1d3] hover:bg-[#2c292f] transition-all duration-300 rounded-lg active:scale-95">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</nav>
+<main class="pt-24 pb-32 px-4 md:px-8 max-w-7xl mx-auto">
+<!-- Header Section -->
+<header class="mb-12 relative">
+<div class="absolute -top-10 -left-10 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
+<span class="text-tertiary font-label font-bold uppercase tracking-[0.2em] text-xs mb-2 block">The Grand Library</span>
+<h1 class="text-4xl md:text-6xl font-headline font-bold tracking-tight text-on-surface mb-4">Champions Encyclopedia</h1>
+<p class="text-on-surface-variant max-w-2xl text-lg leading-relaxed">Study the legends of the convergence. Filter through arcane lineages and combat roles to forge your perfect team composition.</p>
+</header>
+<!-- Filter Bar -->
+<section class="mb-10 flex flex-col md:flex-row gap-4 items-end md:items-center justify-between">
+<div class="flex flex-wrap gap-3 overflow-x-auto hide-scrollbar pb-2 md:pb-0">
+<button class="bg-tertiary text-on-tertiary px-5 py-2 rounded-lg font-label font-bold text-xs uppercase shadow-[0_0_15px_rgba(233,196,0,0.3)] transition-all">All Units</button>
+<button class="bg-surface-container-high hover:bg-surface-bright text-on-surface-variant px-5 py-2 rounded-lg font-label font-bold text-xs uppercase transition-all">Cost 1</button>
+<button class="bg-surface-container-high hover:bg-surface-bright text-on-surface-variant px-5 py-2 rounded-lg font-label font-bold text-xs uppercase transition-all">Cost 2</button>
+<button class="bg-surface-container-high hover:bg-surface-bright text-on-surface-variant px-5 py-2 rounded-lg font-label font-bold text-xs uppercase transition-all">Cost 3</button>
+<button class="bg-surface-container-high hover:bg-surface-bright text-on-surface-variant px-5 py-2 rounded-lg font-label font-bold text-xs uppercase transition-all">Cost 4</button>
+<button class="bg-surface-container-high hover:bg-surface-bright text-on-surface-variant px-5 py-2 rounded-lg font-label font-bold text-xs uppercase transition-all">Cost 5</button>
+</div>
+<div class="flex gap-4 w-full md:w-auto">
+<div class="relative flex-1 md:flex-none">
+<select class="appearance-none w-full bg-surface-container-highest/50 border-none border-b-2 border-outline-variant text-on-surface py-2.5 pl-4 pr-10 rounded-lg font-label text-sm focus:ring-0 focus:border-tertiary">
+<option>Sort by: Name</option>
+<option>Sort by: Tier</option>
+<option>Sort by: Win Rate</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+<button class="bg-surface-container-highest p-2.5 rounded-lg text-on-surface active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="filter_list">filter_list</span>
+</button>
+</div>
+</section>
+<!-- Champion Grid -->
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+<!-- Champion Card 1 (Cost 5) -->
+<div class="group relative bg-surface-container-low rounded-xl overflow-hidden champion-card-glow transition-all duration-500 hover:-translate-y-2 border-t border-outline-variant/20">
+<div class="aspect-[4/5] relative overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="dramatic digital illustration of a majestic celestial warrior with glowing purple armor and long flowing white hair standing in a starfield" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvb4OoGDCm4Jcw0wpqOQfJ8L7BZpKeIjJ8TkS_VBxtSQT-VarbxEqbZXkVIxoaalcPtYCI8GystwByGKJRxn9V9NRxHJ2rKoUDv_nqUIEx3wAwnkVl3TPMlzVEZFERICOK5W1Yl-kX5BntnMik0ZqfaRqmW8BqaJ3yp84EZwBVwQuYovL50gMfJVytcOTq3Tffjn9v3Ns0vEmmJ5cLPPTQV9Htrb3YPeLm99Y-F8VeICxIaK1Iqd1fRnwMISKjb38wMu8C9acQ5Ox_"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+<div class="absolute top-3 left-3 bg-tertiary text-on-tertiary flex items-center gap-1 px-2 py-0.5 rounded-full shadow-lg">
+<span class="material-symbols-outlined text-[14px] font-bold" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<span class="text-xs font-extrabold">5</span>
+</div>
+</div>
+<div class="p-4 relative">
+<h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors">AURELIUS</h3>
+<div class="flex flex-wrap gap-1.5 mt-2">
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Celestial</span>
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Invoker</span>
+</div>
+</div>
+<div class="absolute inset-0 border-2 border-tertiary/0 group-hover:border-tertiary/20 rounded-xl pointer-events-none transition-all duration-500"></div>
+</div>
+<!-- Champion Card 2 -->
+<div class="group relative bg-surface-container-low rounded-xl overflow-hidden champion-card-glow transition-all duration-500 hover:-translate-y-2 border-t border-outline-variant/20">
+<div class="aspect-[4/5] relative overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="fierce cybernetic assassin with neon green glowing blades and tactical mask in a rainy dark futuristic alleyway" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAogoJjuPmYhjm4bIrL49plW1NOjJEXaWEQdbcFExwe6I22Sf-QRz8m4WNpfgXVVzwhN4Svey9pwViuFFD9d2jOB5OjdBArou5IpHpVyPs_5xbKEV6jzLificItHRD2zFmgicVgEFxxNfoc2lNGd1LjuK6YCgUd5PS8E8e_KZPPd67_AVNUbd1bYGUwpm7xOB9oJpECx_bCsA0u-YrKirgiu_I7S5rjWDEJFN8i7Za4XdiavdNflp-cXcwbjehOai1NGnpVlYIvFrmQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+<div class="absolute top-3 left-3 bg-primary-container text-primary flex items-center gap-1 px-2 py-0.5 rounded-full shadow-lg">
+<span class="material-symbols-outlined text-[14px] font-bold" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<span class="text-xs font-extrabold">4</span>
+</div>
+</div>
+<div class="p-4 relative">
+<h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors">VEXA</h3>
+<div class="flex flex-wrap gap-1.5 mt-2">
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Cybernetic</span>
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Edge</span>
+</div>
+</div>
+</div>
+<!-- Champion Card 3 -->
+<div class="group relative bg-surface-container-low rounded-xl overflow-hidden champion-card-glow transition-all duration-500 hover:-translate-y-2 border-t border-outline-variant/20">
+<div class="aspect-[4/5] relative overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="ancient spirit of nature with antlers made of glowing birch wood and eyes like emeralds in a misty forest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBE2pHPqN-wWmJISIB7zbrgJFNS59AHHDc72o7mIjT7jAgetaeRQerGJuT7eCz-QXl_K5zS2kIS_2NBLDFu47LY_pK6r9xno7NkL-hWs4Z4SlZlE6dWy_1OR4ov8sp6lvcYvSSHQS-y88w3OOeOrWjuxy6dFDa0fIlZDw0XQa9wAwTctQNnyQpA_nbc9H2-GWoZ-5FVqbrm_vhDh9Vw_FFhFbDIumBmsqHAEhXZFiFVmvOlu5puTwtOwOeX8ZuPWSQJkTy81xs05Y8M"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+<div class="absolute top-3 left-3 bg-secondary-container text-on-secondary-container flex items-center gap-1 px-2 py-0.5 rounded-full shadow-lg">
+<span class="material-symbols-outlined text-[14px] font-bold" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<span class="text-xs font-extrabold">3</span>
+</div>
+</div>
+<div class="p-4 relative">
+<h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors">THALON</h3>
+<div class="flex flex-wrap gap-1.5 mt-2">
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Dryad</span>
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Warden</span>
+</div>
+</div>
+</div>
+<!-- Champion Card 4 -->
+<div class="group relative bg-surface-container-low rounded-xl overflow-hidden champion-card-glow transition-all duration-500 hover:-translate-y-2 border-t border-outline-variant/20">
+<div class="aspect-[4/5] relative overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="heavy armored dwarven blacksmith with a hammer wreathed in orange flame standing before a forge" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3O6QyEwTz7MncS8ijgo3Rx451_Yr_2hU5TeTZJU5vKIpeK7wZDNmZmDTs3izOFy2r66h_Mw3hwyX_A_NQtI21ekxgkAFqznIsA2yO3IEWoecY8C3OLGCjOQPDW0inMUYOy5f1lJRYfRV6DkNdSdOYYduIjWScDMWsAjTYfCkJnGYsMsr1uFs5uVr42CMBPc_jUaLZvvjPbhOY7AcFkDoTH8XsQlNwLupgGmHcW15dDfl49t-XsSWTJH5QeGRVRd2VskeQV3oTWjQW"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+<div class="absolute top-3 left-3 bg-surface-container-highest text-on-surface-variant flex items-center gap-1 px-2 py-0.5 rounded-full shadow-lg">
+<span class="material-symbols-outlined text-[14px] font-bold" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<span class="text-xs font-extrabold">2</span>
+</div>
+</div>
+<div class="p-4 relative">
+<h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors">BRUNDIR</h3>
+<div class="flex flex-wrap gap-1.5 mt-2">
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Mountain</span>
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Vanguard</span>
+</div>
+</div>
+</div>
+<!-- Champion Card 5 -->
+<div class="group relative bg-surface-container-low rounded-xl overflow-hidden champion-card-glow transition-all duration-500 hover:-translate-y-2 border-t border-outline-variant/20">
+<div class="aspect-[4/5] relative overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="dark sorceress in flowing black robes casting a spell of swirling dark energy and blue sparks" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7u_X5dyidJ0g6-3TtwiCVobSSTCah4L2ReJjpwF9ubmXqLSeHuTSuTVERrQN2Z56_Ozsp9rE_ZXdkDkMM1_uhRcrScpnW4cHp0qDpho0WASZWG_fhE0zWkZI5KfncEDHi6f83ZVcm8yjupLqfZM4AiDhssj_LltW2B83GHghZFQk8zhxCNzNaGUHZVOty85zNQ3orb98nyiX0gbxrbs3-k3XHql52E_L-qDCseo6c8UY_0UtyoZmfuV9fVX8MJ0a8hV134YwJcg4F"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+<div class="absolute top-3 left-3 bg-surface-container text-on-surface-variant/50 flex items-center gap-1 px-2 py-0.5 rounded-full shadow-lg">
+<span class="material-symbols-outlined text-[14px] font-bold" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<span class="text-xs font-extrabold">1</span>
+</div>
+</div>
+<div class="p-4 relative">
+<h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors">MORRGAN</h3>
+<div class="flex flex-wrap gap-1.5 mt-2">
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Umbral</span>
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Mage</span>
+</div>
+</div>
+</div>
+<!-- Reusing cards for grid density -->
+<!-- Champion Card 6 -->
+<div class="group relative bg-surface-container-low rounded-xl overflow-hidden champion-card-glow transition-all duration-500 hover:-translate-y-2 border-t border-outline-variant/20">
+<div class="aspect-[4/5] relative overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="frost dragon wyvern swooping over ice-capped mountains with blue magical frost trails following its wings" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwXJueEHlF-ybmOISrFFaWMf7uILfwJavklFYrMA6pW13RsxAySl867mM2Shd3nU9_Jl3EfVCoijypTN6gGRZgkAsPmJQfjsztAmHyL0VUG38uMv68ePstxVSBSYCMJ1jIV2qj9qQwU6jPTFUfXBbhnmLIiqZO4Z6o5muXmp5HAQUcEqvc_kcsIM8YcFSdAHwpbsNeLA_xLJF6R6_bJOltFajFMI0SHUf07-jWdPXxIBXtkElMR4CWAiPi5aGF5AwQpOPHzKRUbK4e"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+<div class="absolute top-3 left-3 bg-tertiary text-on-tertiary flex items-center gap-1 px-2 py-0.5 rounded-full shadow-lg">
+<span class="material-symbols-outlined text-[14px] font-bold" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<span class="text-xs font-extrabold">5</span>
+</div>
+</div>
+<div class="p-4 relative">
+<h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors">CRYOS</h3>
+<div class="flex flex-wrap gap-1.5 mt-2">
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Behemoth</span>
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Iceborn</span>
+</div>
+</div>
+</div>
+<!-- Champion Card 7 -->
+<div class="group relative bg-surface-container-low rounded-xl overflow-hidden champion-card-glow transition-all duration-500 hover:-translate-y-2 border-t border-outline-variant/20">
+<div class="aspect-[4/5] relative overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="noble knight in golden plate armor holding a glowing shield against a backdrop of a medieval cathedral" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRdrNFHMcLs1WqU4I1K_ule-vrTxCb19Sq9pG47tU_AmXRUGgkkzvXYxRRS5WxrkfY79PaDNaiPv7e7M75LOrkNC5AxqnxWE8BOCZoGaC2wUKFIkD6OJGLObTeDb-vpfdS3_1mAtw6a5F8IOTU9FU0TcNFw2ph917ReziwK7ZV8Z2mamYgOVkAZrOXRNyTHU8AGWpHdBY3M0LMZwltB6upn-ldxjauWLwr0sIOPdUya1Zrqp7bYkfR0EV2OxqjNgDwajVB5Abys6CC"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+<div class="absolute top-3 left-3 bg-primary-container text-primary flex items-center gap-1 px-2 py-0.5 rounded-full shadow-lg">
+<span class="material-symbols-outlined text-[14px] font-bold" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<span class="text-xs font-extrabold">4</span>
+</div>
+</div>
+<div class="p-4 relative">
+<h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors">SIR GALAHAD</h3>
+<div class="flex flex-wrap gap-1.5 mt-2">
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Honored</span>
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Bastion</span>
+</div>
+</div>
+</div>
+<!-- Champion Card 8 -->
+<div class="group relative bg-surface-container-low rounded-xl overflow-hidden champion-card-glow transition-all duration-500 hover:-translate-y-2 border-t border-outline-variant/20">
+<div class="aspect-[4/5] relative overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="mysterious desert nomad with golden eyes and a sand-colored cloak standing in a windblown dune" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDY3lobchOo9WzKWkkPG-7NX2tBNCxPpqYkJiAr_BThUrYnGNWoR35tZU7lkjUcHtf1z3tg2IStvLjN0dXunE8Uwl64HzUXuJ6LKe81fmEOJ-oiECeS8otrUT88ipZFX-AetQAEqXere7nyKe3_dUIikPIzYBo32A6pW61ED4DNfFPVuLuhxIyFXaUoUpX9jWcU7oX8LDGMBqRJ2e9k8GMRZgEr9fLCIJf7gbwoBlCrSrVgvIDS5bgGpMEimsC66S8TYb8i4zA4NuTT"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+<div class="absolute top-3 left-3 bg-secondary-container text-on-secondary-container flex items-center gap-1 px-2 py-0.5 rounded-full shadow-lg">
+<span class="material-symbols-outlined text-[14px] font-bold" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<span class="text-xs font-extrabold">3</span>
+</div>
+</div>
+<div class="p-4 relative">
+<h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors">KHALIL</h3>
+<div class="flex flex-wrap gap-1.5 mt-2">
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Sandstalker</span>
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Deadeye</span>
+</div>
+</div>
+</div>
+<!-- Champion Card 9 -->
+<div class="group relative bg-surface-container-low rounded-xl overflow-hidden champion-card-glow transition-all duration-500 hover:-translate-y-2 border-t border-outline-variant/20">
+<div class="aspect-[4/5] relative overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="abstract geometric structure representing an AI entity with pulsating blue light nodes and clean white panels" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBt5Qs96PMQG0BffGu3kXg1QR6D4CqYIA2xhRdEhTr4nRupQebEmqu1KU3v_wQHrkr6lNiM22rF28zlAdhl7Yw9nBLFi7EWgTRuSQ8FOFKEfCi6rdXNcsKaDsYXVhIj4fbEcNXyf3IS9vrrD-QJ2mybuuzkaEx2IH7QX0SitVNBvW15328Uz90FT-AZtTTtzQPzlQB_qJqOJHW1aZrZlELM3a8w5iXuZpP9KlgSiohyPOeanwQZGT2nTdg8NwEvP-_GSIY_yapcZG7o"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+<div class="absolute top-3 left-3 bg-surface-container-highest text-on-surface-variant flex items-center gap-1 px-2 py-0.5 rounded-full shadow-lg">
+<span class="material-symbols-outlined text-[14px] font-bold" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<span class="text-xs font-extrabold">2</span>
+</div>
+</div>
+<div class="p-4 relative">
+<h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors">UNIT-73</h3>
+<div class="flex flex-wrap gap-1.5 mt-2">
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Automata</span>
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Artillerist</span>
+</div>
+</div>
+</div>
+<!-- Champion Card 10 -->
+<div class="group relative bg-surface-container-low rounded-xl overflow-hidden champion-card-glow transition-all duration-500 hover:-translate-y-2 border-t border-outline-variant/20">
+<div class="aspect-[4/5] relative overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="ethereal spirit fox made of flowing white smoke and pink light running through an abstract digital forest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlxbU5EILUIO4IG07n0ASDyCVnyIDw4aQNBi4OLQ7ni9lPUOqG8_5sUAriW9w9BDFPzbG0aAVh-HxrjsDt-ZLn9rVpXvh8XY3tTONtjFKexwLhMKYgpG6Jl218pn_8sBRfFy1tN3Xe04_q4hX3Ql6JCsweFmCROiQqYKvuF1CpO_pasI1kXY-dwyVIspzT41JpH363oBZHzbdUDfS8SN57ha4ArWtXaZ_-s1acPivRsAVVc8c6uLgiaW6zqGcq6I2jduSzxR3xVNHt"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+<div class="absolute top-3 left-3 bg-surface-container text-on-surface-variant/50 flex items-center gap-1 px-2 py-0.5 rounded-full shadow-lg">
+<span class="material-symbols-outlined text-[14px] font-bold" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<span class="text-xs font-extrabold">1</span>
+</div>
+</div>
+<div class="p-4 relative">
+<h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors">YUME</h3>
+<div class="flex flex-wrap gap-1.5 mt-2">
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Fabled</span>
+<span class="bg-secondary-container/30 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Mystic</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination or Load More -->
+<div class="mt-16 flex justify-center">
+<button class="group flex items-center gap-3 bg-surface-container-high hover:bg-surface-bright text-on-surface px-8 py-3 rounded-xl border border-outline-variant/30 transition-all active:scale-95 shadow-xl">
+<span class="font-headline font-bold uppercase tracking-widest text-sm">Unlock More Records</span>
+<span class="material-symbols-outlined transition-transform group-hover:translate-y-1">expand_more</span>
+</button>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 px-4 pb-safe md:hidden bg-[#151218]/90 backdrop-blur-xl border-t border-[#dfb7ff]/10 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] z-50 rounded-t-lg">
+<a class="flex flex-col items-center justify-center text-[#dfb7ff] bg-[#2c292f] rounded-xl px-4 py-1 shadow-[0_0_10px_rgba(223,183,255,0.2)] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase">Units</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#d2c1d3]/60 hover:text-[#dfb7ff] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="shield_with_heart">shield_with_heart</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase">Items</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#d2c1d3]/60 hover:text-[#dfb7ff] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase">Builder</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#d2c1d3]/60 hover:text-[#dfb7ff] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="Trophy">trophy</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase">Meta</span>
+</a>
+</nav>
+<!-- Decorative Grimoire Elements -->
+<div class="fixed top-1/4 -right-20 w-80 h-80 bg-tertiary/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+<div class="fixed bottom-1/4 -left-20 w-96 h-96 bg-primary/5 rounded-full blur-[150px] pointer-events-none -z-10"></div>
+</body></html>
