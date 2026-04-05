@@ -3,7 +3,6 @@ import { Icon } from '../../../components/ui/Icon'
 interface BoardItem {
   id: string
   imageUrl: string
-  alt: string
 }
 
 interface ItemsTrayProps {
@@ -31,7 +30,7 @@ export function ItemsTray({ items }: ItemsTrayProps) {
         </div>
       </div>
       <div className="ml-auto text-[10px] font-bold uppercase text-on-surface-variant tracking-widest">
-        Equipped: {items.length}/10
+        Đã trang bị: {items.length}/10
       </div>
     </div>
   )

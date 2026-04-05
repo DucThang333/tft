@@ -12,7 +12,7 @@ export function ItemTooltip({ item }: ItemTooltipProps) {
     <GlassPanel className="p-6 transition-all duration-500">
       <div className="flex items-start gap-4 mb-4">
         <div className="w-16 h-16 rounded-lg bg-primary-container p-1 shadow-[0_0_15px_rgba(118,0,195,0.4)]">
-          <img src={item.imageUrl} alt={item.imageAlt} className="w-full h-full object-cover rounded" />
+          <img src={item.imageUrl} alt="" className="w-full h-full object-cover rounded" />
         </div>
         <div>
           <h3 className="font-headline text-lg font-bold text-on-surface">{item.name}</h3>
@@ -20,11 +20,11 @@ export function ItemTooltip({ item }: ItemTooltipProps) {
         </div>
       </div>
       <p className="text-on-surface-variant text-sm italic mb-4 leading-relaxed">
-        "The heavier the blade, the deeper the silence it leaves behind."
+        “Lưỡi kiếm càng nặng, sự im lặng để lại càng sâu.”
       </p>
       <div className="space-y-3">
         <div className="flex justify-between text-xs font-bold uppercase text-outline">
-          <span>Utility</span>
+          <span>Tiện ích</span>
           <div className="flex gap-1">
             {[1, 2, 3].map((i) => (
               <span key={i} className={`w-3 h-3 rounded-full ${i <= item.utility ? 'bg-tertiary' : 'bg-outline-variant'}`} />
@@ -32,7 +32,7 @@ export function ItemTooltip({ item }: ItemTooltipProps) {
           </div>
         </div>
         <div className="flex justify-between text-xs font-bold uppercase text-outline">
-          <span>Offense</span>
+          <span>Tấn công</span>
           <div className="flex gap-1">
             {[1, 2, 3].map((i) => (
               <span key={i} className={`w-3 h-3 rounded-full ${i <= item.offense ? 'bg-primary' : 'bg-outline-variant'}`} />

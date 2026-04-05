@@ -3,16 +3,28 @@ import type { CombinedItem } from '../../../types'
 interface CombinedItemCardProps {
   item: CombinedItem
   variant?: 'featured' | 'compact' | 'wide'
+  highlighted?: boolean
+  id?: string
 }
 
-export function CombinedItemCard({ item, variant = 'compact' }: CombinedItemCardProps) {
+const highlightRing = 'ring-2 ring-primary ring-offset-2 ring-offset-background'
+
+export function CombinedItemCard({
+  item,
+  variant = 'compact',
+  highlighted = false,
+  id,
+}: CombinedItemCardProps) {
   if (variant === 'featured') {
     return (
-      <div className="md:row-span-2 group relative overflow-hidden bg-surface-container-high rounded-xl p-6 border-t border-outline-variant/10 hover:shadow-[0_0_30px_rgba(233,196,0,0.1)] transition-all">
+      <div
+        id={id}
+        className={`md:row-span-2 group relative overflow-hidden bg-surface-container-high rounded-xl p-6 border-t border-outline-variant/10 hover:shadow-[0_0_30px_rgba(233,196,0,0.1)] transition-all ${highlighted ? highlightRing : ''}`}
+      >
         <div className="flex items-center gap-4 mb-6">
           <div className="relative">
             <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-tertiary to-tertiary-container p-0.5 shadow-[0_0_15px_rgba(233,196,0,0.2)]">
-              <img src={item.imageUrl} alt={item.imageAlt} className="w-full h-full object-cover rounded-[0.65rem]" loading="lazy" />
+              <img src={item.imageUrl} alt="" className="w-full h-full object-cover rounded-[0.65rem]" loading="lazy" />
             </div>
           </div>
           <div>
@@ -42,10 +54,13 @@ export function CombinedItemCard({ item, variant = 'compact' }: CombinedItemCard
 
   if (variant === 'wide') {
     return (
-      <div className="md:col-span-2 group relative bg-surface-container-high rounded-xl p-5 border-t border-outline-variant/10 hover:shadow-lg transition-all flex items-center justify-between gap-6">
+      <div
+        id={id}
+        className={`md:col-span-2 group relative bg-surface-container-high rounded-xl p-5 border-t border-outline-variant/10 hover:shadow-lg transition-all flex items-center justify-between gap-6 ${highlighted ? highlightRing : ''}`}
+      >
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-lg bg-surface-container-highest overflow-hidden border border-primary/20">
-            <img src={item.imageUrl} alt={item.imageAlt} className="w-full h-full object-cover" loading="lazy" />
+            <img src={item.imageUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
           </div>
           <div>
             <h4 className="font-headline font-bold text-on-surface text-lg">{item.name}</h4>
@@ -65,10 +80,13 @@ export function CombinedItemCard({ item, variant = 'compact' }: CombinedItemCard
   }
 
   return (
-    <div className="group relative bg-surface-container-high rounded-xl p-5 border-t border-outline-variant/10 hover:shadow-lg transition-all">
+    <div
+      id={id}
+      className={`group relative bg-surface-container-high rounded-xl p-5 border-t border-outline-variant/10 hover:shadow-lg transition-all ${highlighted ? highlightRing : ''}`}
+    >
       <div className="flex items-center gap-4 mb-4">
         <div className="w-14 h-14 rounded-lg bg-surface-container-highest overflow-hidden border border-primary/20">
-          <img src={item.imageUrl} alt={item.imageAlt} className="w-full h-full object-cover" loading="lazy" />
+          <img src={item.imageUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
         </div>
         <div>
           <h4 className="font-headline font-bold text-on-surface">{item.name}</h4>

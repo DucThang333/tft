@@ -10,7 +10,7 @@ export function BaseItemGrid({ items, selectedId, onSelect }: BaseItemGridProps)
   return (
     <div className="bg-surface-container-high rounded-xl p-6 shadow-xl relative">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="font-headline text-xl font-bold text-primary">Base Components</h2>
+        <h2 className="font-headline text-xl font-bold text-primary">Linh kiện cơ bản</h2>
         <span className="material-symbols-outlined text-tertiary">diamond</span>
       </div>
       <div className="grid grid-cols-3 gap-3">
@@ -29,7 +29,7 @@ export function BaseItemGrid({ items, selectedId, onSelect }: BaseItemGridProps)
               <div className="aspect-square rounded-md overflow-hidden relative mb-2">
                 <img
                   src={item.imageUrl}
-                  alt={item.imageAlt}
+                  alt=""
                   className="w-full h-full object-cover"
                   loading="lazy"
                 />

@@ -11,7 +11,7 @@ export function CompCard({ comp, variant }: CompCardProps) {
       <div className="group relative overflow-hidden bg-surface-container-low rounded-lg border-t border-outline-variant/15 hover:bg-surface-container transition-all duration-500 shadow-xl">
         {comp.backgroundImageUrl && (
           <div className="absolute right-0 top-0 w-1/3 h-full opacity-20 group-hover:opacity-30 transition-opacity pointer-events-none">
-            <img className="w-full h-full object-cover grayscale" src={comp.backgroundImageUrl} alt={comp.backgroundImageAlt ?? ''} />
+            <img className="w-full h-full object-cover grayscale" src={comp.backgroundImageUrl} alt="" />
           </div>
         )}
         <div className="p-6 md:p-8 relative z-10">
@@ -46,13 +46,13 @@ export function CompCard({ comp, variant }: CompCardProps) {
                   ))}
                 </div>
                 <div className="flex justify-between text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
-                  <span>Early</span>
-                  <span>Mid</span>
-                  <span>Late</span>
+                  <span>Đầu</span>
+                  <span>Giữa</span>
+                  <span>Cuối</span>
                 </div>
               </div>
               <div className="flex justify-between items-center text-sm">
-                <span className="text-on-surface-variant">Difficulty</span>
+                <span className="text-on-surface-variant">Độ khó</span>
                 <div className="flex gap-1">
                   {[1, 2, 3].map((i) => (
                     <span key={i} className={`w-2 h-2 rounded-full ${i <= comp.difficulty ? 'bg-tertiary' : 'bg-tertiary/20'}`} />
@@ -71,7 +71,7 @@ export function CompCard({ comp, variant }: CompCardProps) {
                       <img
                         className="w-full h-full object-cover transform group-hover/champ:scale-110 transition-transform duration-500"
                         src={champ.imageUrl}
-                        alt={champ.imageAlt}
+                        alt=""
                         loading="lazy"
                       />
                     </div>
@@ -91,12 +91,12 @@ export function CompCard({ comp, variant }: CompCardProps) {
               {comp.strategy && (
                 <div className="mt-8 pt-8 border-t border-outline-variant/10 flex flex-wrap items-center gap-6">
                   <div className="flex items-center gap-4">
-                    <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Core Strategy</span>
+                    <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Chiến lược cốt lõi</span>
                     <p className="text-sm text-on-surface-variant/80 italic">"{comp.strategy}"</p>
                   </div>
                   <div className="ml-auto flex gap-4">
-                    <button className="bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold px-4 py-2 rounded transition-all active:scale-95">VIEW GUIDE</button>
-                    <button className="bg-primary-container text-white text-xs font-bold px-4 py-2 rounded shadow-lg shadow-primary-container/20 active:scale-95">COPY BOARD</button>
+                    <button className="bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold px-4 py-2 rounded transition-all active:scale-95">XEM HƯỚNG DẪN</button>
+                    <button className="bg-primary-container text-white text-xs font-bold px-4 py-2 rounded shadow-lg shadow-primary-container/20 active:scale-95">SAO CHÉP BÀN CỜ</button>
                   </div>
                 </div>
               )}
@@ -124,7 +124,7 @@ export function CompCard({ comp, variant }: CompCardProps) {
           </div>
         </div>
         <div className="text-right">
-          <div className="text-[10px] font-bold text-on-surface-variant mb-1 uppercase tracking-widest">Difficulty</div>
+          <div className="text-[10px] font-bold text-on-surface-variant mb-1 uppercase tracking-widest">Độ khó</div>
           <div className="flex gap-1 justify-end">
             {[1, 2, 3].map((i) => (
               <span key={i} className={`w-1.5 h-1.5 rounded-full ${i <= comp.difficulty ? 'bg-tertiary' : 'bg-tertiary/20'}`} />
@@ -135,7 +135,7 @@ export function CompCard({ comp, variant }: CompCardProps) {
       <div className="flex items-center gap-3 mb-6">
         <div className="flex -space-x-3">
           {comp.champions.slice(0, 2).map((champ) => (
-            <img key={champ.name} className="w-12 h-12 rounded-full border-2 border-surface-container object-cover" src={champ.imageUrl} alt={champ.imageAlt} loading="lazy" />
+            <img key={champ.name} className="w-12 h-12 rounded-full border-2 border-surface-container object-cover" src={champ.imageUrl} alt="" loading="lazy" />
           ))}
           {comp.champions.length > 2 && (
             <div className="w-12 h-12 rounded-full border-2 border-surface-container bg-surface-container-highest flex items-center justify-center text-xs font-bold text-on-surface-variant">
@@ -148,7 +148,7 @@ export function CompCard({ comp, variant }: CompCardProps) {
         <div className="bg-tertiary h-full" style={{ width: `${comp.winRate}%` }} />
       </div>
       <div className="flex justify-between mt-2">
-        <span className="text-[10px] font-bold text-on-surface-variant uppercase">Win Rate: {comp.winRate}%</span>
+        <span className="text-[10px] font-bold text-on-surface-variant uppercase">Tỷ lệ thắng: {comp.winRate}%</span>
         <span className="text-[10px] font-bold text-on-surface-variant uppercase">Top 4: {comp.top4Rate}%</span>
       </div>
     </div>

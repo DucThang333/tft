@@ -33,8 +33,8 @@ export function SynergySidebar({ synergies }: SynergySidebarProps) {
   return (
     <aside className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h2 className="font-headline text-lg font-bold tracking-tight uppercase text-on-surface">Synergies</h2>
-        <span className="bg-surface-container-highest px-2 py-1 rounded text-[10px] font-bold text-tertiary">LVL 8</span>
+        <h2 className="font-headline text-lg font-bold tracking-tight uppercase text-on-surface">Hệ đồng minh</h2>
+        <span className="bg-surface-container-highest px-2 py-1 rounded text-[10px] font-bold text-tertiary">Cấp 8</span>
       </div>
       <div className="space-y-4">
         {synergies.map((trait) => (

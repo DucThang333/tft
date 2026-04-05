@@ -11,12 +11,12 @@ interface FilterBarProps {
 }
 
 const costOptions: { label: string; value: CostFilter }[] = [
-  { label: 'All Units', value: 'all' },
-  { label: 'Cost 1', value: 1 },
-  { label: 'Cost 2', value: 2 },
-  { label: 'Cost 3', value: 3 },
-  { label: 'Cost 4', value: 4 },
-  { label: 'Cost 5', value: 5 },
+  { label: 'Tất cả', value: 'all' },
+  { label: 'Giá 1', value: 1 },
+  { label: 'Giá 2', value: 2 },
+  { label: 'Giá 3', value: 3 },
+  { label: 'Giá 4', value: 4 },
+  { label: 'Giá 5', value: 5 },
 ]
 
 export function FilterBar({ costFilter, onCostFilterChange, sortBy, onSortChange }: FilterBarProps) {
@@ -39,8 +39,8 @@ export function FilterBar({ costFilter, onCostFilterChange, sortBy, onSortChange
             onChange={(e) => onSortChange(e.target.value as 'name' | 'cost' | 'winrate')}
             className="appearance-none w-full bg-surface-container-highest/50 border-none text-on-surface py-2.5 pl-4 pr-10 rounded-lg font-label text-sm focus:ring-0 focus:ring-tertiary"
           >
-            <option value="name">Sort by: Name</option>
-            <option value="cost">Sort by: Tier</option>
+            <option value="name">Sắp xếp: Tên</option>
+            <option value="cost">Sắp xếp: Giá</option>
           </select>
           <Icon name="expand_more" className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant" />
         </div>

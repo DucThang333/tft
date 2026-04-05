@@ -2,9 +2,9 @@ import { NavLink } from 'react-router-dom'
 import { Icon } from '../ui/Icon'
 
 const navItems = [
-  { to: '/champions', icon: 'groups', label: 'Units' },
-  { to: '/items', icon: 'shield_with_heart', label: 'Items' },
-  { to: '/board', icon: 'grid_view', label: 'Builder' },
+  { to: '/champions', icon: 'groups', label: 'Tướng' },
+  { to: '/items', icon: 'shield_with_heart', label: 'Đồ' },
+  { to: '/board', icon: 'grid_view', label: 'Ghép đội' },
   { to: '/meta', icon: 'trophy', label: 'Meta' },
 ]
 

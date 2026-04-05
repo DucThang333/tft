@@ -12,7 +12,7 @@ export function ChampionCard({ champion }: ChampionCardProps) {
         <img
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           src={champion.imageUrl}
-          alt={champion.imageAlt}
+          alt=""
           loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent" />

@@ -25,11 +25,11 @@ export function ChampionTray({ champions }: ChampionTrayProps) {
   return (
     <aside className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <h2 className="font-headline text-lg font-bold uppercase tracking-tight">Champion Tray</h2>
+        <h2 className="font-headline text-lg font-bold uppercase tracking-tight">Khay tướng</h2>
         <div className="relative">
           <input
             className="w-full bg-surface-container-highest/50 border-none rounded-t-lg text-sm py-2 px-10 focus:ring-0 focus:ring-tertiary transition-all placeholder-on-surface-variant/50"
-            placeholder="Search units..."
+            placeholder="Tìm tướng..."
             type="text"
           />
           <Icon name="search" className="absolute left-3 top-2 text-on-surface-variant text-lg" />
@@ -60,19 +60,19 @@ export function ChampionTray({ champions }: ChampionTrayProps) {
       </div>
       <div className="mt-4 p-5 bg-surface-container-lowest border border-outline-variant/20 rounded-xl">
         <h3 className="font-headline text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4">
-          Board Composition
+          Đội hình trên bàn
         </h3>
         <div className="space-y-3">
           <div className="flex justify-between items-center text-xs">
-            <span className="text-on-surface-variant">Avg. Tier Cost</span>
+            <span className="text-on-surface-variant">Giá trung bình</span>
             <span className="text-tertiary font-bold">3.8</span>
           </div>
           <div className="flex justify-between items-center text-xs">
-            <span className="text-on-surface-variant">Frontline Strength</span>
-            <span className="text-primary font-bold">EXCELLENT</span>
+            <span className="text-on-surface-variant">Sức mạnh tuyến trước</span>
+            <span className="text-primary font-bold">XUẤT SẮC</span>
           </div>
           <div className="flex justify-between items-center text-xs">
-            <span className="text-on-surface-variant">Magic Damage</span>
+            <span className="text-on-surface-variant">Sát thương phép</span>
             <span className="text-on-surface font-bold">65%</span>
           </div>
         </div>
