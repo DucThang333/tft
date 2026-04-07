@@ -172,21 +172,28 @@ export function AdminChampionsPage() {
     const mergedParams: ChampionSkillParamRow[] = draft.skill.params.map((p, i) => {
       const fromInput = parseStarValuesCsv(skillParamStarInputs[i] ?? '')
       const vals = fromInput.length >= 3 ? fromInput : p.starValues
-      return { ...p, starValues: vals }
+      return {
+        ...p,
+        paramKey: p.paramKey.trim(),
+        displayLabel: p.displayLabel.trim(),
+        starValues: vals,
+      }
     })
+
+    const nonEmptySkillParams = mergedParams.filter(
+      (r) =>
+        r.paramKey !== '' ||
+        r.displayLabel !== '' ||
+        (Array.isArray(r.starValues) && r.starValues.length > 0) ||
+        (r.scalesWith != null && String(r.scalesWith).trim() !== ''),
+    )
 
     const champion: Champion = {
       ...draft,
       cost: Number(draft.cost) as Champion['cost'],
       skill: {
         ...draft.skill,
-        params: mergedParams.filter(
-          (r) =>
-            r.paramKey.trim() &&
-            r.displayLabel.trim() &&
-            r.starValues.length >= 3 &&
-            r.starValues.length <= 4,
-        ),
+        params: nonEmptySkillParams,
       },
     }
 
@@ -229,11 +236,22 @@ export function AdminChampionsPage() {
       return
     }
 
-    for (let pi = 0; pi < draft.skill.params.length; pi++) {
-      const p = draft.skill.params[pi]
-      const vals = parseStarValuesCsv(skillParamStarInputs[pi] ?? p.starValues.join(','))
-      const hasKey = p.paramKey.trim() || p.displayLabel.trim()
-      if (!hasKey) continue
+    for (let pi = 0; pi < nonEmptySkillParams.length; pi++) {
+      const p = nonEmptySkillParams[pi]
+      const vals = p.starValues
+      const hasAny =
+        p.paramKey.trim() ||
+        p.displayLabel.trim() ||
+        vals.length > 0 ||
+        (p.scalesWith != null && String(p.scalesWith).trim() !== '')
+      if (!hasAny) continue
+      if (!p.paramKey.trim() || !p.displayLabel.trim()) {
+        setSaveMessage({
+          type: 'err',
+          text: `Tham số dòng ${pi + 1}: cần nhập đủ paramKey và displayLabel.`,
+        })
+        return
+      }
       if (vals.length < 3 || vals.length > 4) {
         setSaveMessage({
           type: 'err',
@@ -424,20 +442,6 @@ export function AdminChampionsPage() {
                   value={draft.roleType}
                   onChange={(e) => setField('roleType', e.target.value)}
                   placeholder="vd. Đấu Sĩ Vật Lý"
-                  className="w-full rounded-lg border border-outline-variant/30 bg-surface-container-lowest px-3 py-2.5 text-sm"
-                />
-              </label>
-              <label className="block space-y-1.5">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
-                  Phiên bản nội dung
-                </span>
-                <input
-                  type="number"
-                  min={1}
-                  value={draft.contentVersion ?? 1}
-                  onChange={(e) =>
-                    setField('contentVersion', Math.max(1, Number(e.target.value) || 1))
-                  }
                   className="w-full rounded-lg border border-outline-variant/30 bg-surface-container-lowest px-3 py-2.5 text-sm"
                 />
               </label>

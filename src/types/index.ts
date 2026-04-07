@@ -87,6 +87,14 @@ export interface GameEncounter {
   imageUrl: string
 }
 
+/** Option dùng cho Select phiên bản ở admin/game-data. */
+export interface DataVersionOption {
+  value: string
+  label: string
+  isActive?: boolean
+  notes?: string
+}
+
 /** Trạng thái lõi: augment gắn với tướng + ghi chú (Silver / Gold / Prismatic). */
 export interface ChampionAugmentState {
   linked: Pick<GameAugment, 'id' | 'tier' | 'name' | 'description' | 'imageUrl'>[]

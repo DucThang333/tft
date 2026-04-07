@@ -1,4 +1,9 @@
+import { useEffect, useMemo } from 'react'
+import { Select, Typography } from 'antd'
 import { Link, NavLink, useLocation } from 'react-router-dom'
+import { tftApi } from '../../api/tftApi'
+import { usePromiseData } from '../../hooks/usePromiseData'
+import { useDataVersion } from '../../state/dataVersion'
 import { Icon } from '../ui/Icon'
 
 interface AppTopBarProps {
@@ -8,6 +13,26 @@ interface AppTopBarProps {
 export function AppTopBar({ onOpenSearch }: AppTopBarProps) {
   const { pathname } = useLocation()
   const sanctumActive = pathname.startsWith('/admin')
+  const { data } = usePromiseData(() => tftApi.gameVersions(), [])
+  const { value: selectedVersion, setValue: setSelectedVersion } = useDataVersion()
+  const versions = data ?? []
+
+  useEffect(() => {
+    if (versions.length === 0) return
+    if (selectedVersion) return
+    const active = versions.find((v) => v.isActive)
+    setSelectedVersion((active ?? versions[0]).value)
+  }, [selectedVersion, setSelectedVersion, versions])
+
+  const versionOptions = useMemo(
+    () =>
+      versions.map((v) => ({
+        value: v.value,
+        label: `${v.label}${v.isActive ? ' (active)' : ''}`,
+      })),
+    [versions],
+  )
+
   return (
     <header className="w-full top-0 sticky z-50 bg-background shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
       <div className="flex justify-between items-center px-6 md:px-8 h-20 w-full max-w-full">
@@ -60,6 +85,13 @@ export function AppTopBar({ onOpenSearch }: AppTopBarProps) {
           </nav>
         </div>
         <div className="flex items-center gap-4 md:gap-6">
+          <Select
+            size="small"
+            value={selectedVersion || undefined}
+            options={versionOptions}
+            placeholder="Chọn version"
+            onChange={setSelectedVersion}
+          />
           <button
             type="button"
             onClick={() => onOpenSearch?.()}

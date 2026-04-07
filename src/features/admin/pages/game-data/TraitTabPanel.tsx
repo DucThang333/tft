@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useState } from 'react'
 import { App, Button, Card, Col, Input, List, Row, Select, Space, Typography } from 'antd'
 import { tftApi } from '../../../../api/tftApi'
+import { DescriptionTemplateField } from '../../../../components/forms/DescriptionTemplateField'
+import { ImageUrlUpload } from '../../../../components/forms/ImageUrlUpload'
 import { usePromiseData } from '../../../../hooks/usePromiseData'
 import type { GameTraitDef } from '../../../../types'
 
@@ -162,32 +164,21 @@ export function TraitTabPanel() {
                 />
               </div>
             </Space>
-            <div>
-              <Typography.Text type="secondary" className="text-xs block mb-1">
-                Mô tả (có thể tham khảo mô tả synergy trên MetaTFT)
-              </Typography.Text>
-              <Input.TextArea
-                rows={4}
-                value={draft.description}
-                onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
-              />
-            </div>
+            <DescriptionTemplateField
+              label="Mô tả (có thể tham khảo mô tả synergy trên MetaTFT)"
+              rows={4}
+              value={draft.description}
+              onChange={(description) => setDraft((d) => ({ ...d, description }))}
+            />
             <div className="w-full">
               <Typography.Text type="secondary" className="text-xs block mb-1">
-                URL icon
+                Icon (upload hoặc URL)
               </Typography.Text>
-              <Input
+              <ImageUrlUpload
                 value={draft.iconUrl}
-                onChange={(e) => setDraft((d) => ({ ...d, iconUrl: e.target.value }))}
+                onChange={(url) => setDraft((d) => ({ ...d, iconUrl: url }))}
               />
             </div>
-            {draft.iconUrl ? (
-              <img
-                src={draft.iconUrl}
-                alt=""
-                className="h-16 w-16 rounded border border-outline-variant/20 object-cover"
-              />
-            ) : null}
             <Space>
               <Button type="primary" loading={saving} onClick={save}>
                 {isNew ? 'Tạo' : 'Cập nhật'}

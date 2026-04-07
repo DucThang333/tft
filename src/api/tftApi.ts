@@ -1,4 +1,5 @@
 import { apiBaseUrl } from './config'
+import { getDataVersion } from '../state/dataVersion'
 import type {
   BaseItem,
   BoardChampion,
@@ -12,13 +13,69 @@ import type {
   GameAugment,
   GameEncounter,
   GameTraitDef,
+  DataVersionOption,
   Trait,
   TrayChampion,
 } from '../types'
 
-async function tftGet<T>(path: string): Promise<T> {
-  const url = `${apiBaseUrl()}${path}`
-  const res = await fetch(url)
+function withVersionQuery(path: string): string {
+  const versionId = getDataVersion()
+  if (!versionId) return path
+  const sep = path.includes('?') ? '&' : '?'
+  return `${path}${sep}versionId=${encodeURIComponent(versionId)}`
+}
+
+function withVersionHeaders(base?: HeadersInit): HeadersInit | undefined {
+  const versionId = getDataVersion()
+  if (!versionId) return base
+  const headers = new Headers(base ?? {})
+  headers.set('x-data-version', versionId)
+  return headers
+}
+
+function withVersionInBody(body: unknown): unknown {
+  const versionId = getDataVersion()
+  if (!versionId || body == null || typeof body !== 'object') return body
+  const raw = body as Record<string, unknown>
+
+  if (raw.champion && typeof raw.champion === 'object') {
+    return {
+      ...raw,
+      champion: { ...(raw.champion as Record<string, unknown>), versionId },
+    }
+  }
+  if (raw.trait && typeof raw.trait === 'object') {
+    return {
+      ...raw,
+      trait: { ...(raw.trait as Record<string, unknown>), versionId },
+    }
+  }
+  if (raw.item && typeof raw.item === 'object') {
+    return {
+      ...raw,
+      item: { ...(raw.item as Record<string, unknown>), versionId },
+    }
+  }
+  if (raw.augment && typeof raw.augment === 'object') {
+    return {
+      ...raw,
+      augment: { ...(raw.augment as Record<string, unknown>), versionId },
+    }
+  }
+  if (raw.encounter && typeof raw.encounter === 'object') {
+    return {
+      ...raw,
+      encounter: { ...(raw.encounter as Record<string, unknown>), versionId },
+    }
+  }
+  return body
+}
+
+async function tftGet<T>(path: string, opts?: { includeVersion?: boolean }): Promise<T> {
+  const includeVersion = opts?.includeVersion !== false
+  const fullPath = includeVersion ? withVersionQuery(path) : path
+  const url = `${apiBaseUrl()}${fullPath}`
+  const res = await fetch(url, { headers: includeVersion ? withVersionHeaders() : undefined })
   if (!res.ok) {
     const body = await res.text()
     throw new Error(`${res.status} ${res.statusText}${body ? `: ${body.slice(0, 180)}` : ''}`)
@@ -26,17 +83,27 @@ async function tftGet<T>(path: string): Promise<T> {
   return res.json() as Promise<T>
 }
 
-async function tftWrite<T>(method: 'POST' | 'PUT', path: string, body: unknown): Promise<T> {
-  const url = `${apiBaseUrl()}${path}`
+async function tftWrite<T>(
+  method: 'POST' | 'PUT' | 'DELETE',
+  path: string,
+  body?: unknown,
+): Promise<T> {
+  const fullPath = withVersionQuery(path)
+  const payload = withVersionInBody(body)
+  const url = `${apiBaseUrl()}${fullPath}`
   const res = await fetch(url, {
     method,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    headers:
+      payload === undefined
+        ? withVersionHeaders()
+        : withVersionHeaders({ 'Content-Type': 'application/json' }),
+    body: payload === undefined ? undefined : JSON.stringify(payload),
   })
   if (!res.ok) {
     const text = await res.text()
     throw new Error(`${res.status} ${res.statusText}${text ? `: ${text.slice(0, 180)}` : ''}`)
   }
+  if (res.status === 204) return undefined as T
   return res.json() as Promise<T>
 }
 
@@ -176,6 +243,15 @@ function parseGameEncounter(raw: Record<string, unknown>): GameEncounter {
     name: String(raw.name ?? ''),
     description: raw.description != null ? String(raw.description) : '',
     imageUrl: raw.imageUrl != null ? String(raw.imageUrl) : '',
+  }
+}
+
+function parseDataVersionOption(raw: Record<string, unknown>): DataVersionOption {
+  return {
+    value: String(raw.value ?? ''),
+    label: String(raw.label ?? ''),
+    isActive: raw.isActive != null ? Boolean(raw.isActive) : undefined,
+    notes: raw.notes != null ? String(raw.notes) : undefined,
   }
 }
 
@@ -418,6 +494,13 @@ export const tftApi = {
     return (r.traits ?? []).map(parseGameTraitDef)
   },
 
+  async gameVersions(): Promise<DataVersionOption[]> {
+    const r = await tftGet<{ versions: Record<string, unknown>[] }>('/api/v1/meta/versions', {
+      includeVersion: false,
+    })
+    return (r.versions ?? []).map(parseDataVersionOption).filter((v) => v.value.length > 0)
+  },
+
   async createGameTraitDef(trait: GameTraitDef): Promise<GameTraitDef> {
     const res = await tftWrite<{ trait: Record<string, unknown> }>(
       'POST',
@@ -435,6 +518,11 @@ export const tftApi = {
       { trait },
     )
     return parseGameTraitDef(res.trait)
+  },
+
+  async removeGameTraitDef(id: string): Promise<void> {
+    const traitId = encodeURIComponent(id)
+    await tftWrite<void>('DELETE', `/api/v1/admin/meta/traits/${traitId}`)
   },
 
   async gameAugments(): Promise<GameAugment[]> {
