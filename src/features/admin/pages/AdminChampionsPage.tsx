@@ -1,10 +1,26 @@
-import { useCallback, useMemo, useState, type FormEvent } from 'react'
+import { useCallback, useMemo, useState, type FormEvent, type ReactNode } from 'react'
 import { Collapse, Select } from 'antd'
 import { Icon } from '../../../components/ui/Icon'
 import { ImageUrlUpload } from '../../../components/forms/ImageUrlUpload'
 import { tftApi } from '../../../api/tftApi'
 import { usePromiseData } from '../../../hooks/usePromiseData'
-import type { Champion, ChampionSkillParamRow, ChampionStarStatRow } from '../../../types'
+import { SkillDescriptionEditor } from '../../../components/editor/SkillDescriptionEditor'
+import { skillDescriptionTextIsEmpty } from '../../../components/editor/skillDescriptionHtml'
+import { CHAMPION_SPLASH_ASPECT_CLASS } from '../../champions/championVisual'
+import { SkillDescriptionPanel } from '../../../features/champions/components/skill/SkillDescriptionPanel'
+import {
+  AdminFormCardProgress,
+  AdminFormCollapseLabel,
+  ADMIN_FORM_COLLAPSE_CLASS,
+} from '../components/AdminFormCollapseLabel'
+import { fieldFilled, mergeStats } from '../components/adminFormFieldStats'
+import { buildScalesWithVisualMaps } from '../utils/scalesWithVisualMaps'
+import type {
+  Champion,
+  ChampionSkillBlock,
+  ChampionSkillParamRow,
+  ChampionStarStatRow,
+} from '../../../types'
 
 const COSTS: Champion['cost'][] = [1, 2, 3, 4, 5]
 
@@ -25,7 +41,26 @@ function defaultStarRow(stars: ChampionStarStatRow['stars']): ChampionStarStatRo
   }
 }
 
+function withSyncedPrimarySkill(skills: ChampionSkillBlock[]): {
+  skills: ChampionSkillBlock[]
+  skill: ChampionSkillBlock
+} {
+  const skill =
+    skills[0] ??
+    ({
+      tabLabel: 'Mặc định',
+      sortOrder: 0,
+      name: '',
+      descriptionTemplate: '',
+      params: [],
+    } satisfies ChampionSkillBlock)
+  return { skills, skill }
+}
+
 function emptyForm(): Champion {
+  const skills: ChampionSkillBlock[] = [
+    { tabLabel: 'Mặc định', sortOrder: 0, name: '', descriptionTemplate: '', params: [] },
+  ]
   return {
     id: '',
     name: '',
@@ -34,7 +69,7 @@ function emptyForm(): Champion {
     contentVersion: 1,
     traits: [],
     imageUrl: '',
-    skill: { name: '', descriptionTemplate: '', params: [] },
+    ...withSyncedPrimarySkill(skills),
     starStats: [defaultStarRow(1)],
   }
 }
@@ -50,13 +85,17 @@ export function AdminChampionsPage() {
   const [listTick, setListTick] = useState(0)
   const { data: champions, loading, error } = usePromiseData(() => tftApi.champions(), [listTick])
   const { data: traitDefs } = usePromiseData(() => tftApi.gameTraitDefs(), [listTick])
+  const { data: scalesWithOpts } = usePromiseData(() => tftApi.scalesWithOptions(), [listTick])
+  const { data: roleTypes } = usePromiseData(() => tftApi.gameRoleTypes(), [listTick])
 
   const [isNew, setIsNew] = useState(true)
   const [draft, setDraft] = useState<Champion>(emptyForm)
-  const [skillParamStarInputs, setSkillParamStarInputs] = useState<string[]>([])
+  const [skillParamStarInputs, setSkillParamStarInputs] = useState<string[][]>([])
+  const [activeSkillIndex, setActiveSkillIndex] = useState(0)
   const [query, setQuery] = useState('')
   const [saving, setSaving] = useState(false)
   const [saveMessage, setSaveMessage] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
+  const [skillEditorNonce, setSkillEditorNonce] = useState(0)
 
   const traitSelectOptions = useMemo(() => {
     const defs = traitDefs ?? []
@@ -74,6 +113,106 @@ export function AdminChampionsPage() {
     ]
   }, [traitDefs])
 
+  const roleById = useMemo(() => {
+    const m = new Map<string, { name: string; color: string }>()
+    for (const r of roleTypes ?? []) {
+      m.set(r.id, { name: r.name, color: r.color })
+    }
+    return m
+  }, [roleTypes])
+
+  const roleSelectOptions = useMemo(() => {
+    const defs = roleTypes ?? []
+    const swatch = (color: string, text: string) => (
+      <span className="flex items-center gap-2">
+        <span
+          className="inline-block w-2.5 h-2.5 rounded-sm border border-outline-variant/40 shrink-0"
+          style={{ backgroundColor: color }}
+          aria-hidden
+        />
+        <span>{text}</span>
+      </span>
+    )
+    const fromApi = defs.map((r) => ({
+      value: r.id,
+      label: swatch(r.color, `${r.name} (${r.id})`),
+    }))
+    const ids = new Set(fromApi.map((x) => x.value))
+    const orphan: { value: string; label: ReactNode }[] = []
+    const orphanId = draft.roleType?.trim()
+    if (orphanId && !ids.has(orphanId)) {
+      orphan.push({
+        value: orphanId,
+        label: swatch(draft.roleTypeColor ?? '#888888', `${orphanId} (không có trong meta)`),
+      })
+    }
+    return [...orphan, ...fromApi].sort((a, b) => a.value.localeCompare(b.value))
+  }, [roleTypes, draft.roleType, draft.roleTypeColor])
+
+  const { scalesWithIconById, scalesWithTextColorById, scalesWithValueFormatById } = useMemo(
+    () => buildScalesWithVisualMaps(scalesWithOpts),
+    [scalesWithOpts],
+  )
+
+  const scalesWithSelectOptions = useMemo(() => {
+    const defs = scalesWithOpts ?? []
+    const fromApi = defs.map((o) => ({
+      value: o.id,
+      label: `${o.label} (${o.id})`,
+    }))
+    const ids = new Set(fromApi.map((x) => x.value))
+    const orphan: { value: string; label: string }[] = []
+    for (const sk of draft.skills) {
+      for (const row of sk.params) {
+        const sw = row.scalesWith?.trim()
+        if (sw && !ids.has(sw)) {
+          orphan.push({ value: sw, label: `${sw} (không có trong meta)` })
+          ids.add(sw)
+        }
+      }
+    }
+    return [...orphan, ...fromApi].sort((a, b) => a.value.localeCompare(b.value))
+  }, [scalesWithOpts, draft.skills])
+
+  const identityStats = useMemo(() => {
+    const filled =
+      (fieldFilled(draft.id) ? 1 : 0) +
+      (fieldFilled(draft.name) ? 1 : 0) +
+      1 +
+      (fieldFilled(draft.roleType) ? 1 : 0) +
+      (draft.traits.length > 0 ? 1 : 0) +
+      (fieldFilled(draft.imageUrl) ? 1 : 0)
+    return { filled, total: 6 }
+  }, [draft.id, draft.name, draft.cost, draft.roleType, draft.traits, draft.imageUrl])
+
+  const skillBlockStats = useMemo(() => {
+    let filled = 0
+    const total = Math.max(1, draft.skills.length) * 2
+    for (const sk of draft.skills) {
+      if (fieldFilled(sk.name)) filled += 1
+      if (!skillDescriptionTextIsEmpty(sk.descriptionTemplate)) filled += 1
+    }
+    return { filled, total }
+  }, [draft.skills])
+
+  const skillParamStats = useMemo(() => {
+    const rows = draft.skills.flatMap((s) => s.params)
+    if (rows.length === 0) return { filled: 0, total: 1 }
+    const filled = rows.filter(
+      (r) =>
+        fieldFilled(r.paramKey) ||
+        fieldFilled(r.displayLabel) ||
+        (r.starValues?.length ?? 0) > 0 ||
+        fieldFilled(r.scalesWith),
+    ).length
+    return { filled, total: rows.length }
+  }, [draft.skills])
+
+  const championFormProgress = useMemo(
+    () => mergeStats(identityStats, skillBlockStats, skillParamStats),
+    [identityStats, skillBlockStats, skillParamStats],
+  )
+
   const filtered = useMemo(() => {
     const list = champions ?? []
     const q = query.trim().toLowerCase()
@@ -83,25 +222,59 @@ export function AdminChampionsPage() {
         c.name.toLowerCase().includes(q) ||
         c.id.toLowerCase().includes(q) ||
         c.roleType.toLowerCase().includes(q) ||
+        (c.roleTypeName?.toLowerCase().includes(q) ?? false) ||
         c.traits.some((t) => t.toLowerCase().includes(q)),
     )
   }, [champions, query])
 
+  const previewSkill = useMemo((): ChampionSkillBlock => {
+    const sk = draft.skills[activeSkillIndex] ?? draft.skills[0]
+    if (!sk) {
+      return {
+        tabLabel: 'Mặc định',
+        sortOrder: 0,
+        name: '',
+        descriptionTemplate: '',
+        params: [],
+      }
+    }
+    const rowInputs = skillParamStarInputs[activeSkillIndex] ?? []
+    const params = sk.params.map((p, i) => {
+      const fromInput = parseStarValuesCsv(rowInputs[i] ?? '')
+      const vals = fromInput.length >= 1 ? fromInput : p.starValues
+      return { ...p, starValues: vals }
+    })
+    return { ...sk, params }
+  }, [draft.skills, activeSkillIndex, skillParamStarInputs])
+
   const refreshList = useCallback(() => setListTick((t) => t + 1), [])
+
+  const bumpSkillEditor = useCallback(() => setSkillEditorNonce((n) => n + 1), [])
 
   const startNew = useCallback(() => {
     setIsNew(true)
     setDraft(emptyForm())
-    setSkillParamStarInputs([])
+    setSkillParamStarInputs([[]])
+    setActiveSkillIndex(0)
     setSaveMessage(null)
-  }, [])
+    bumpSkillEditor()
+  }, [bumpSkillEditor])
 
-  const selectChampion = useCallback((c: Champion) => {
-    setIsNew(false)
-    setDraft({ ...c, skill: { ...c.skill, params: c.skill.params.map((p) => ({ ...p })) } })
-    setSkillParamStarInputs(c.skill.params.map((p) => p.starValues.join(', ')))
-    setSaveMessage(null)
-  }, [])
+  const selectChampion = useCallback(
+    (c: Champion) => {
+      setIsNew(false)
+      const skills = (c.skills?.length ? c.skills : [c.skill]).map((s) => ({
+        ...s,
+        params: s.params.map((p) => ({ ...p })),
+      }))
+      setDraft({ ...c, ...withSyncedPrimarySkill(skills) })
+      setSkillParamStarInputs(skills.map((s) => s.params.map((p) => p.starValues.join(', '))))
+      setActiveSkillIndex(0)
+      setSaveMessage(null)
+      bumpSkillEditor()
+    },
+    [bumpSkillEditor],
+  )
 
   const setField = useCallback(<K extends keyof Champion>(key: K, value: Champion[K]) => {
     setDraft((d) => ({ ...d, [key]: value }))
@@ -119,7 +292,10 @@ export function AdminChampionsPage() {
       const used = new Set(d.starStats.map((s) => s.stars))
       const next = ([1, 2, 3, 4] as const).find((s) => !used.has(s))
       if (!next) return d
-      return { ...d, starStats: [...d.starStats, defaultStarRow(next)] }
+      const prev = d.starStats[d.starStats.length - 1]
+      const base = prev ?? defaultStarRow(1)
+      const row: ChampionStarStatRow = { ...base, stars: next }
+      return { ...d, starStats: [...d.starStats, row] }
     })
   }, [])
 
@@ -130,71 +306,159 @@ export function AdminChampionsPage() {
     })
   }, [])
 
-  const addSkillParamRow = useCallback(() => {
-    setDraft((d) => ({
-      ...d,
-      skill: {
-        ...d.skill,
-        params: [
-          ...d.skill.params,
-          { paramKey: '', displayLabel: '', starValues: [], sortOrder: d.skill.params.length },
-        ],
-      },
-    }))
-    setSkillParamStarInputs((prev) => [...prev, ''])
-  }, [])
+  const patchActiveSkill = useCallback(
+    (patch: Partial<ChampionSkillBlock>) => {
+      const si = activeSkillIndex
+      setDraft((d) => {
+        const next = d.skills.map((s, i) => (i === si ? { ...s, ...patch } : s))
+        return { ...d, ...withSyncedPrimarySkill(next) }
+      })
+    },
+    [activeSkillIndex],
+  )
 
-  const removeSkillParamRow = useCallback((index: number) => {
-    setDraft((d) => ({
-      ...d,
-      skill: { ...d.skill, params: d.skill.params.filter((_, i) => i !== index) },
-    }))
-    setSkillParamStarInputs((prev) => prev.filter((_, i) => i !== index))
-  }, [])
+  const addChampionSkill = useCallback(() => {
+    let newIndex = 0
+    setDraft((d) => {
+      const n = d.skills.length
+      const tabLabel = n === 0 ? 'Mặc định' : n === 1 ? 'Anh Hùng' : `Kỹ năng ${n + 1}`
+      const newSk: ChampionSkillBlock = {
+        tabLabel,
+        sortOrder: n,
+        name: '',
+        descriptionTemplate: '',
+        params: [],
+      }
+      const next = [...d.skills, newSk]
+      newIndex = next.length - 1
+      return { ...d, ...withSyncedPrimarySkill(next) }
+    })
+    setSkillParamStarInputs((prev) => [...prev, []])
+    setActiveSkillIndex(newIndex)
+    bumpSkillEditor()
+  }, [bumpSkillEditor])
+
+  const removeChampionSkill = useCallback(
+    (si: number) => {
+      setDraft((d) => {
+        if (d.skills.length <= 1) return d
+        const next = d.skills.filter((_, i) => i !== si)
+        return { ...d, ...withSyncedPrimarySkill(next) }
+      })
+      setSkillParamStarInputs((prev) => prev.filter((_, i) => i !== si))
+      setActiveSkillIndex((ai) => {
+        if (si < ai) return ai - 1
+        if (si === ai) return Math.max(0, si - 1)
+        return ai
+      })
+      bumpSkillEditor()
+    },
+    [bumpSkillEditor],
+  )
+
+  const addSkillParamRow = useCallback(() => {
+    const si = activeSkillIndex
+    setDraft((d) => {
+      const next = d.skills.map((s, i) =>
+        i === si
+          ? {
+              ...s,
+              params: [
+                ...s.params,
+                { paramKey: '', displayLabel: '', starValues: [], sortOrder: s.params.length },
+              ],
+            }
+          : s,
+      )
+      return { ...d, ...withSyncedPrimarySkill(next) }
+    })
+    setSkillParamStarInputs((prev) => {
+      const copy = [...prev]
+      while (copy.length <= si) copy.push([])
+      copy[si] = [...(copy[si] ?? []), '']
+      return copy
+    })
+  }, [activeSkillIndex])
+
+  const removeSkillParamRow = useCallback(
+    (paramIndex: number) => {
+      const si = activeSkillIndex
+      setDraft((d) => {
+        const next = d.skills.map((s, i) =>
+          i === si ? { ...s, params: s.params.filter((_, j) => j !== paramIndex) } : s,
+        )
+        return { ...d, ...withSyncedPrimarySkill(next) }
+      })
+      setSkillParamStarInputs((prev) => {
+        const copy = prev.map((r) => [...r])
+        if (copy[si]) copy[si] = copy[si].filter((_, j) => j !== paramIndex)
+        return copy
+      })
+    },
+    [activeSkillIndex],
+  )
 
   const setSkillParamField = useCallback(
-    (index: number, patch: Partial<ChampionSkillParamRow>) => {
+    (paramIndex: number, patch: Partial<ChampionSkillParamRow>) => {
+      const si = activeSkillIndex
       setDraft((d) => ({
         ...d,
-        skill: {
-          ...d.skill,
-          params: d.skill.params.map((p, i) => (i === index ? { ...p, ...patch } : p)),
-        },
+        ...withSyncedPrimarySkill(
+          d.skills.map((s, i) =>
+            i === si
+              ? {
+                  ...s,
+                  params: s.params.map((p, j) => (j === paramIndex ? { ...p, ...patch } : p)),
+                }
+              : s,
+          ),
+        ),
       }))
     },
-    [],
+    [activeSkillIndex],
   )
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setSaveMessage(null)
 
-    const mergedParams: ChampionSkillParamRow[] = draft.skill.params.map((p, i) => {
-      const fromInput = parseStarValuesCsv(skillParamStarInputs[i] ?? '')
-      const vals = fromInput.length >= 3 ? fromInput : p.starValues
+    const mergedSkills: ChampionSkillBlock[] = draft.skills.map((sk, si) => {
+      const rowInputs = skillParamStarInputs[si] ?? []
+      const mergedParams = sk.params.map((p, pi) => {
+        const fromInput = parseStarValuesCsv(rowInputs[pi] ?? '')
+        const vals = fromInput.length >= 1 ? fromInput : p.starValues
+        return {
+          ...p,
+          paramKey: p.paramKey.trim(),
+          displayLabel: p.displayLabel.trim(),
+          starValues: vals,
+        }
+      })
+      const nonEmptyParams = mergedParams.filter(
+        (r) =>
+          r.paramKey !== '' ||
+          r.displayLabel !== '' ||
+          (Array.isArray(r.starValues) && r.starValues.length > 0) ||
+          (r.scalesWith != null && String(r.scalesWith).trim() !== ''),
+      )
       return {
-        ...p,
-        paramKey: p.paramKey.trim(),
-        displayLabel: p.displayLabel.trim(),
-        starValues: vals,
+        ...sk,
+        tabLabel: sk.tabLabel?.trim() || `Kỹ năng ${si + 1}`,
+        sortOrder: sk.sortOrder ?? si,
+        params: nonEmptyParams,
       }
     })
-
-    const nonEmptySkillParams = mergedParams.filter(
-      (r) =>
-        r.paramKey !== '' ||
-        r.displayLabel !== '' ||
-        (Array.isArray(r.starValues) && r.starValues.length > 0) ||
-        (r.scalesWith != null && String(r.scalesWith).trim() !== ''),
-    )
 
     const champion: Champion = {
       ...draft,
       cost: Number(draft.cost) as Champion['cost'],
-      skill: {
-        ...draft.skill,
-        params: nonEmptySkillParams,
-      },
+      skills: mergedSkills,
+      skill: mergedSkills[0] ?? draft.skill,
+    }
+
+    if (champion.skills.length === 0) {
+      setSaveMessage({ type: 'err', text: 'Cần ít nhất một kỹ năng.' })
+      return
     }
 
     if (!champion.id.trim()) {
@@ -210,12 +474,18 @@ export function AdminChampionsPage() {
       return
     }
     if (!champion.roleType.trim()) {
-      setSaveMessage({ type: 'err', text: 'Vai trò (roleType) là bắt buộc khi tạo / cập nhật đầy đủ.' })
+      setSaveMessage({ type: 'err', text: 'Chọn vai trò.' })
       return
     }
-    if (!champion.skill.name.trim() || !champion.skill.descriptionTemplate.trim()) {
-      setSaveMessage({ type: 'err', text: 'Tên kỹ năng và mô tả (template) là bắt buộc.' })
-      return
+    for (let si = 0; si < champion.skills.length; si++) {
+      const sk = champion.skills[si]
+      if (!sk.name.trim() || skillDescriptionTextIsEmpty(sk.descriptionTemplate)) {
+        setSaveMessage({
+          type: 'err',
+          text: `Kỹ năng "${sk.tabLabel || `#${si + 1}`}": cần tên và mô tả (template).`,
+        })
+        return
+      }
     }
     if (!champion.imageUrl.trim()) {
       setSaveMessage({ type: 'err', text: 'Ảnh tướng là bắt buộc (tải ảnh lên).' })
@@ -236,28 +506,31 @@ export function AdminChampionsPage() {
       return
     }
 
-    for (let pi = 0; pi < nonEmptySkillParams.length; pi++) {
-      const p = nonEmptySkillParams[pi]
-      const vals = p.starValues
-      const hasAny =
-        p.paramKey.trim() ||
-        p.displayLabel.trim() ||
-        vals.length > 0 ||
-        (p.scalesWith != null && String(p.scalesWith).trim() !== '')
-      if (!hasAny) continue
-      if (!p.paramKey.trim() || !p.displayLabel.trim()) {
-        setSaveMessage({
-          type: 'err',
-          text: `Tham số dòng ${pi + 1}: cần nhập đủ paramKey và displayLabel.`,
-        })
-        return
-      }
-      if (vals.length < 3 || vals.length > 4) {
-        setSaveMessage({
-          type: 'err',
-          text: `Tham số "${p.paramKey || p.displayLabel || '…'}": starValues cần 3 hoặc 4 số (phân tách bằng dấu phẩy).`,
-        })
-        return
+    for (let si = 0; si < champion.skills.length; si++) {
+      const sk = champion.skills[si]
+      for (let pi = 0; pi < sk.params.length; pi++) {
+        const p = sk.params[pi]
+        const vals = p.starValues
+        const hasAny =
+          p.paramKey.trim() ||
+          p.displayLabel.trim() ||
+          vals.length > 0 ||
+          (p.scalesWith != null && String(p.scalesWith).trim() !== '')
+        if (!hasAny) continue
+        if (!p.paramKey.trim() || !p.displayLabel.trim()) {
+          setSaveMessage({
+            type: 'err',
+            text: `Kỹ năng "${sk.tabLabel}": tham số dòng ${pi + 1} cần paramKey và displayLabel.`,
+          })
+          return
+        }
+        if (vals.length < 1 || vals.length > 4) {
+          setSaveMessage({
+            type: 'err',
+            text: `Kỹ năng "${sk.tabLabel}" · "${p.paramKey || p.displayLabel || '…'}": starValues cần 1–4 số.`,
+          })
+          return
+        }
       }
     }
 
@@ -271,16 +544,20 @@ export function AdminChampionsPage() {
         const updated = await tftApi.updateChampion(champion)
         setSaveMessage({ type: 'ok', text: 'Đã cập nhật tướng.' })
         setDraft(updated)
-        setSkillParamStarInputs(updated.skill.params.map((p) => p.starValues.join(', ')))
+        setSkillParamStarInputs(
+          (updated.skills?.length ? updated.skills : [updated.skill]).map((s) =>
+            s.params.map((p) => p.starValues.join(', ')),
+          ),
+        )
+        setActiveSkillIndex(0)
+        bumpSkillEditor()
       }
       refreshList()
     } catch (err) {
       const text = err instanceof Error ? err.message : String(err)
       setSaveMessage({
         type: 'err',
-        text:
-          text ||
-          'Lưu thất bại. Kiểm tra API có route POST/PUT /api/v1/admin/champions hay chưa.',
+        text: text || 'Lưu thất bại.',
       })
     } finally {
       setSaving(false)
@@ -300,10 +577,6 @@ export function AdminChampionsPage() {
         <h1 className="text-4xl font-headline font-extrabold text-on-surface tracking-tight uppercase mb-2">
           Tạo &amp; cập nhật tướng
         </h1>
-        <p className="text-on-surface-variant max-w-2xl text-sm leading-relaxed">
-          Form khớp model backend: vai trò, kỹ năng + template, chỉ số theo sao, tộc/hệ từ meta. Ảnh dùng tải file
-          (data URL). Tạo tướng cần ít nhất một dòng starStats và một tộc/hệ.
-        </p>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
@@ -356,11 +629,15 @@ export function AdminChampionsPage() {
                             : 'border-l-4 border-transparent hover:bg-surface-container-high/80'
                         }`}
                       >
-                        <img
-                          src={c.imageUrl}
-                          alt=""
-                          className="w-11 h-11 rounded-md object-cover border border-outline-variant/20 shrink-0"
-                        />
+                        <div
+                          className={`h-11 w-auto ${CHAMPION_SPLASH_ASPECT_CLASS} rounded-md border border-outline-variant/20 shrink-0 overflow-hidden`}
+                        >
+                          <img
+                            src={c.imageUrl}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
                         <div className="min-w-0 flex-1">
                           <p className="font-headline font-bold text-on-surface text-sm truncate">{c.name}</p>
                           <p className="text-[10px] text-on-surface-variant uppercase tracking-wider truncate">
@@ -388,12 +665,30 @@ export function AdminChampionsPage() {
               <h2 className="text-lg font-headline font-bold text-on-surface uppercase tracking-tight">
                 {isNew ? 'Hồ sơ mới' : 'Chỉnh sửa hồ sơ'}
               </h2>
-              <span className="text-[10px] font-label uppercase tracking-widest text-tertiary">
-                {isNew ? 'Chế độ tạo' : 'Chế độ cập nhật'}
-              </span>
+              <div className="flex flex-wrap items-center gap-3">
+                <AdminFormCardProgress filled={championFormProgress.filled} total={championFormProgress.total} />
+                <span className="text-[10px] font-label uppercase tracking-widest text-tertiary">
+                  {isNew ? 'Chế độ tạo' : 'Chế độ cập nhật'}
+                </span>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <Collapse
+              bordered={false}
+              className={ADMIN_FORM_COLLAPSE_CLASS}
+              defaultActiveKey={['identity', 'skill']}
+              items={[
+                {
+                  key: 'identity',
+                  label: (
+                    <AdminFormCollapseLabel
+                      title="Thông tin tướng & ảnh"
+                      filled={identityStats.filled}
+                      total={identityStats.total}
+                    />
+                  ),
+                  children: (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <label className="block space-y-1.5">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
                   Mã tướng (id)
@@ -434,17 +729,46 @@ export function AdminChampionsPage() {
                   ))}
                 </select>
               </label>
-              <label className="block space-y-1.5">
+              <div className="block space-y-1.5">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
-                  Vai trò (roleType)
+                  Vai trò (meta)
                 </span>
-                <input
-                  value={draft.roleType}
-                  onChange={(e) => setField('roleType', e.target.value)}
-                  placeholder="vd. Đấu Sĩ Vật Lý"
-                  className="w-full rounded-lg border border-outline-variant/30 bg-surface-container-lowest px-3 py-2.5 text-sm"
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Chọn vai trò (meta)…"
+                  className="w-full min-h-[42px]"
+                  value={draft.roleType.trim() ? draft.roleType : undefined}
+                  onChange={(id: string | null) => {
+                    if (id == null || id === '') {
+                      setDraft((d) => ({
+                        ...d,
+                        roleType: '',
+                        roleTypeName: undefined,
+                        roleTypeColor: undefined,
+                      }))
+                      return
+                    }
+                    const meta = roleById.get(id)
+                    setDraft((d) => ({
+                      ...d,
+                      roleType: id,
+                      roleTypeName: meta?.name,
+                      roleTypeColor: meta?.color,
+                    }))
+                  }}
+                  options={roleSelectOptions}
+                  filterOption={(input, option) => {
+                    const v = String(option?.value ?? '').toLowerCase()
+                    const hay = `${v} ${roleById.get(v)?.name ?? ''}`.toLowerCase()
+                    return hay.includes(input.toLowerCase())
+                  }}
+                  disabled={Array.isArray(roleTypes) && roleTypes.length === 0}
                 />
-              </label>
+                {Array.isArray(roleTypes) && roleTypes.length === 0 ? (
+                  <p className="text-[10px] text-on-surface-variant mt-1">Chưa tải danh sách vai trò.</p>
+                ) : null}
+              </div>
               <div className="block space-y-1.5 sm:col-span-2">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block">
                   Tộc / hệ (meta)
@@ -461,9 +785,7 @@ export function AdminChampionsPage() {
                   disabled={!traitDefs?.length}
                 />
                 {!traitDefs?.length ? (
-                  <p className="text-[10px] text-on-surface-variant mt-1">
-                    Chưa tải được meta traits — kiểm tra GET /api/v1/meta/traits.
-                  </p>
+                  <p className="text-[10px] text-on-surface-variant mt-1">Chưa tải danh sách tộc/hệ.</p>
                 ) : null}
               </div>
               <div className="sm:col-span-2 space-y-1.5">
@@ -473,46 +795,128 @@ export function AdminChampionsPage() {
                 <ImageUrlUpload value={draft.imageUrl} onChange={(url) => setField('imageUrl', url)} />
               </div>
             </div>
-
-            <div className="space-y-2">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant block">
-                Kỹ năng (skill)
-              </span>
-              <div className="grid grid-cols-1 gap-3">
-                <input
-                  value={draft.skill.name}
-                  onChange={(e) =>
-                    setField('skill', { ...draft.skill, name: e.target.value })
-                  }
-                  placeholder="Tên kỹ năng (skill_name)"
-                  className="w-full rounded-lg border border-outline-variant/30 bg-surface-container-lowest px-3 py-2.5 text-sm"
-                />
-                <textarea
-                  rows={3}
-                  value={draft.skill.descriptionTemplate}
-                  onChange={(e) =>
-                    setField('skill', { ...draft.skill, descriptionTemplate: e.target.value })
-                  }
-                  placeholder="Mô tả template — dùng {{param_key}} khớp tham số bên dưới"
-                  className="w-full rounded-lg border border-outline-variant/30 bg-surface-container-lowest px-3 py-2.5 text-sm resize-y min-h-[80px]"
+                  ),
+                },
+                {
+                  key: 'skill',
+                  label: (
+                    <AdminFormCollapseLabel
+                      title="Kỹ năng (skill)"
+                      filled={skillBlockStats.filled}
+                      total={skillBlockStats.total}
+                    />
+                  ),
+                  children: (
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant shrink-0">
+                  Kỹ năng:
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {draft.skills.map((s, idx) => {
+                    const active = idx === activeSkillIndex
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => {
+                          setActiveSkillIndex(idx)
+                          bumpSkillEditor()
+                        }}
+                        className={`rounded-md px-3 py-1.5 text-xs font-semibold border transition-colors ${
+                          active
+                            ? 'bg-[#C8AA6E] text-[#1a1d24] border-[#C8AA6E]'
+                            : 'bg-surface-container-lowest text-on-surface border-outline-variant/35 hover:border-outline-variant/60'
+                        }`}
+                      >
+                        {s.tabLabel?.trim() || `Kỹ năng ${idx + 1}`}
+                      </button>
+                    )
+                  })}
+                </div>
+                <button
+                  type="button"
+                  onClick={addChampionSkill}
+                  className="text-[10px] font-bold uppercase tracking-widest text-primary hover:underline ml-1"
+                >
+                  + Thêm kỹ năng
+                </button>
+                {draft.skills.length > 1 ? (
+                  <button
+                    type="button"
+                    onClick={() => removeChampionSkill(activeSkillIndex)}
+                    className="text-[10px] font-bold uppercase tracking-widest text-error hover:underline"
+                  >
+                    Xóa tab này
+                  </button>
+                ) : null}
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+                <div className="grid grid-cols-1 gap-3 min-w-0">
+                  <label className="block space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+                      Nhãn tab
+                    </span>
+                    <input
+                      value={draft.skills[activeSkillIndex]?.tabLabel ?? ''}
+                      onChange={(e) => patchActiveSkill({ tabLabel: e.target.value })}
+                      placeholder="vd. Mặc định, Anh Hùng"
+                      className="w-full rounded-lg border border-outline-variant/30 bg-surface-container-lowest px-3 py-2.5 text-sm"
+                    />
+                  </label>
+                  <input
+                    value={draft.skills[activeSkillIndex]?.name ?? ''}
+                    onChange={(e) => patchActiveSkill({ name: e.target.value })}
+                    placeholder="Tên kỹ năng (skill_name)"
+                    className="w-full rounded-lg border border-outline-variant/30 bg-surface-container-lowest px-3 py-2.5 text-sm"
+                  />
+                  <SkillDescriptionEditor
+                    key={`${skillEditorNonce}-${activeSkillIndex}`}
+                    value={draft.skills[activeSkillIndex]?.descriptionTemplate ?? ''}
+                    onChange={(html) => patchActiveSkill({ descriptionTemplate: html })}
+                  />
+                </div>
+                <SkillDescriptionPanel
+                  key={`${draft.id || '__new__'}-${activeSkillIndex}`}
+                  skill={previewSkill}
+                  starStats={draft.starStats}
+                  imageUrl={draft.imageUrl}
+                  className="min-w-0"
+                  scalesWithIconById={scalesWithIconById}
+                  scalesWithTextColorById={scalesWithTextColorById}
+                  scalesWithValueFormatById={scalesWithValueFormatById}
                 />
               </div>
             </div>
+                  ),
+                },
+              ]}
+            />
 
             <Collapse
               bordered={false}
-              className="bg-surface-container-low/40 rounded-lg"
+              className={ADMIN_FORM_COLLAPSE_CLASS}
+              defaultActiveKey={['params']}
               items={[
                 {
                   key: 'params',
                   label: (
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
-                      Tham số kỹ năng (skillParams, tuỳ chọn)
-                    </span>
+                    <AdminFormCollapseLabel
+                      title="Tham số kỹ năng (skillParams)"
+                      filled={skillParamStats.filled}
+                      total={skillParamStats.total}
+                    />
                   ),
                   children: (
                     <div className="space-y-4 pt-1">
-                      {draft.skill.params.map((row, i) => (
+                      <p className="text-[11px] text-on-surface-variant">
+                        Đang sửa tham số cho tab:{' '}
+                        <span className="font-semibold text-on-surface">
+                          {draft.skills[activeSkillIndex]?.tabLabel?.trim() ||
+                            `Kỹ năng ${activeSkillIndex + 1}`}
+                        </span>
+                      </p>
+                      {(draft.skills[activeSkillIndex]?.params ?? []).map((row, i) => (
                         <div
                           key={i}
                           className="grid grid-cols-1 sm:grid-cols-12 gap-2 items-end border-b border-outline-variant/10 pb-4 last:border-0"
@@ -535,16 +939,23 @@ export function AdminChampionsPage() {
                           </label>
                           <label className="sm:col-span-4 space-y-1">
                             <span className="text-[10px] text-on-surface-variant">
-                              starValues (3–4 số, phẩy)
+                              starValues (1–4 số, phẩy)
                             </span>
                             <input
-                              value={skillParamStarInputs[i] ?? row.starValues.join(', ')}
+                              value={
+                                skillParamStarInputs[activeSkillIndex]?.[i] ?? row.starValues.join(', ')
+                              }
                               onChange={(e) => {
                                 const v = e.target.value
+                                const si = activeSkillIndex
                                 setSkillParamStarInputs((prev) => {
-                                  const next = [...prev]
-                                  next[i] = v
-                                  return next
+                                  const copy = prev.map((r) => [...r])
+                                  while (copy.length <= si) copy.push([])
+                                  const rowIn = [...(copy[si] ?? [])]
+                                  while (rowIn.length <= i) rowIn.push('')
+                                  rowIn[i] = v
+                                  copy[si] = rowIn
+                                  return copy
                                 })
                                 setSkillParamField(i, { starValues: parseStarValuesCsv(v) })
                               }}
@@ -554,15 +965,20 @@ export function AdminChampionsPage() {
                           </label>
                           <label className="sm:col-span-2 space-y-1">
                             <span className="text-[10px] text-on-surface-variant">scalesWith</span>
-                            <input
-                              value={row.scalesWith ?? ''}
-                              onChange={(e) =>
+                            <Select
+                              showSearch
+                              allowClear
+                              placeholder="Chọn loại chỉ số"
+                              className="w-full"
+                              optionFilterProp="label"
+                              value={row.scalesWith ?? undefined}
+                              onChange={(v) =>
                                 setSkillParamField(i, {
-                                  scalesWith: e.target.value.trim() || undefined,
+                                  scalesWith: typeof v === 'string' && v.trim() ? v.trim() : undefined,
                                 })
                               }
-                              placeholder="ability_power"
-                              className="w-full rounded border border-outline-variant/30 bg-surface-container-lowest px-2 py-2 text-xs"
+                              options={scalesWithSelectOptions}
+                              notFoundContent={scalesWithOpts == null ? 'Đang tải…' : 'Không có mục phù hợp.'}
                             />
                           </label>
                           <button
@@ -587,9 +1003,10 @@ export function AdminChampionsPage() {
                 {
                   key: 'stars',
                   label: (
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
-                      Chỉ số theo sao (starStats)
-                    </span>
+                    <AdminFormCollapseLabel
+                      title="Chỉ số theo sao (starStats)"
+                      detail={`${draft.starStats.length} mức · 11 chỉ số/mức`}
+                    />
                   ),
                   children: (
                     <div className="space-y-6 pt-1 overflow-x-auto">
@@ -633,24 +1050,52 @@ export function AdminChampionsPage() {
                                 ['armor', 'Giáp'],
                                 ['magicResist', 'Kháng phép'],
                                 ['attackSpeed', 'Tốc đánh'],
-                                ['critChance', 'Crit %'],
+                                ['critChance', 'Tỷ lệ CM'],
                                 ['critDamage', 'Crit DMG'],
                                 ['attackRange', 'Tầm'],
                               ] as const
-                            ).map(([key, label]) => (
-                              <label key={key} className="space-y-0.5">
-                                <span className="text-on-surface-variant block truncate">{label}</span>
-                                <input
-                                  type="number"
-                                  step={key === 'attackSpeed' || key === 'critChance' || key === 'critDamage' ? '0.01' : '1'}
-                                  value={row[key]}
-                                  onChange={(e) =>
-                                    setStarRow(i, { [key]: Number(e.target.value) } as Partial<ChampionStarStatRow>)
-                                  }
-                                  className="w-full rounded border border-outline-variant/30 bg-surface-container-lowest px-1.5 py-1 text-xs"
-                                />
-                              </label>
-                            ))}
+                            ).map(([key, label]) => {
+                              const pctCrit = key === 'critChance' || key === 'critDamage'
+                              const step =
+                                key === 'attackSpeed'
+                                  ? '0.01'
+                                  : pctCrit
+                                    ? '0.1'
+                                    : '1'
+                              const raw = row[key]
+                              /** Tránh nhiễu float (1.4 → 140, 0.25 → 25). */
+                              const displayVal = pctCrit
+                                ? Number.isFinite(raw)
+                                  ? Math.round(raw * 10000) / 100
+                                  : ''
+                                : raw
+                              return (
+                                <label key={key} className="space-y-0.5">
+                                  <span className="text-on-surface-variant block truncate" title={pctCrit ? 'Nhập số %: 25 = 25%' : undefined}>
+                                    {label}
+                                    {pctCrit ? (
+                                      <span className="text-on-surface-variant/60 font-normal"> (%)</span>
+                                    ) : null}
+                                  </span>
+                                  <input
+                                    type="number"
+                                    step={step}
+                                    value={displayVal}
+                                    placeholder={key === 'critChance' ? '25' : key === 'critDamage' ? '140' : undefined}
+                                    onChange={(e) => {
+                                      const v = e.target.value
+                                      const n = v === '' ? 0 : Number(v)
+                                      if (pctCrit) {
+                                        setStarRow(i, { [key]: n / 100 } as Partial<ChampionStarStatRow>)
+                                      } else {
+                                        setStarRow(i, { [key]: n } as Partial<ChampionStarStatRow>)
+                                      }
+                                    }}
+                                    className="w-full rounded border border-outline-variant/30 bg-surface-container-lowest px-1.5 py-1 text-xs"
+                                  />
+                                </label>
+                              )
+                            })}
                           </div>
                         </div>
                       ))}

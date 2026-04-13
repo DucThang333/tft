@@ -1,3 +1,4 @@
+import { CHAMPION_SPLASH_ASPECT_CLASS } from '../../champions/championVisual'
 import type { TrayChampion } from '../../../types'
 import { Icon } from '../../../components/ui/Icon'
 
@@ -42,7 +43,7 @@ export function ChampionTray({ champions }: ChampionTrayProps) {
             className={`p-3 bg-surface-container rounded-lg flex items-center gap-3 border-r-4 ${costBorderColors[champ.cost]} hover:bg-surface-container-high cursor-grab active:scale-95 transition-all`}
           >
             <div
-              className={`w-12 h-12 rounded-lg bg-cover bg-center border ${costImageBorders[champ.cost]} overflow-hidden`}
+              className={`h-12 w-auto ${CHAMPION_SPLASH_ASPECT_CLASS} rounded-lg border ${costImageBorders[champ.cost]} overflow-hidden shrink-0 bg-cover bg-center`}
               style={{ backgroundImage: `url('${champ.imageUrl}')` }}
             />
             <div>

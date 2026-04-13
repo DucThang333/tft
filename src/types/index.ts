@@ -18,6 +18,8 @@ export interface CombinedItem {
   tags: string[]
   imageUrl: string
   stats: { label: string; value: string }[]
+  descriptionParams: MetaDescriptionParamRow[]
+  versionId?: string
 }
 
 export interface Trait {
@@ -61,6 +63,32 @@ export interface Composition {
   backgroundImageUrl?: string
 }
 
+/** Cách hiển thị số theo bậc sao / mẫu cho scalesWith (meta). */
+export type ScalesWithValueFormat = 'flat' | 'percent'
+
+/** Tùy chọn scalesWith (meta) — id khớp `ChampionSkillParamRow.scalesWith`. */
+export interface ScalesWithOption {
+  id: string
+  label: string
+  iconUrl: string
+  /** Màu chữ cho giá trị số trong mô tả (#RGB / #RRGGBB). */
+  textColor?: string
+  /**
+   * `flat` = số thường (vd. 100/150/225).
+   * `percent` = thêm % ở cuối (vd. 100/150/225%).
+   */
+  valueFormat?: ScalesWithValueFormat
+}
+
+/** Tham số `{{key}}` trong mô tả meta (tộc/hệ, vai trò) — API `descriptionParams`. */
+export interface MetaDescriptionParamRow {
+  paramKey: string
+  displayLabel: string
+  sampleValue: string
+  scalesWith?: string
+  sortOrder?: number
+}
+
 /** Định nghĩa tộc/hệ trong bách khoa (khác `Trait` trạng thái đồng minh trên bàn cờ). */
 export interface GameTraitDef {
   id: string
@@ -68,6 +96,17 @@ export interface GameTraitDef {
   kind: 'origin' | 'class'
   description: string
   iconUrl: string
+  descriptionParams: MetaDescriptionParamRow[]
+}
+
+/** Vai trò tướng (meta) — `champions.role_type` lưu `id`. */
+export interface GameRoleType {
+  id: string
+  name: string
+  /** Màu hiển thị (hex, vd. #C8AA6E). */
+  color: string
+  description: string
+  descriptionParams: MetaDescriptionParamRow[]
 }
 
 /** Lõi nâng cấp (Silver / Gold / Prismatic). */
@@ -77,6 +116,8 @@ export interface GameAugment {
   tier: 'silver' | 'gold' | 'prismatic'
   description: string
   imageUrl: string
+  descriptionParams: MetaDescriptionParamRow[]
+  versionId?: string
 }
 
 /** Kỳ ngộ / portal / sự kiện phiên (mô tả meta kiểu Double Up). */
@@ -85,6 +126,8 @@ export interface GameEncounter {
   name: string
   description: string
   imageUrl: string
+  descriptionParams: MetaDescriptionParamRow[]
+  versionId?: string
 }
 
 /** Option dùng cho Select phiên bản ở admin/game-data. */
@@ -121,13 +164,20 @@ export interface ChampionStarStatRow {
 export interface ChampionSkillParamRow {
   paramKey: string
   displayLabel: string
-  /** Độ dài 3 hoặc 4 (theo sao), khớp validation backend. */
+  /** Độ dài 1–4 (theo sao), khớp validation backend. */
   starValues: number[]
+  /** Chỉ dùng preview admin meta: một chuỗi mẫu thay cho `starValues`. */
+  sampleValue?: string
   scalesWith?: string
   sortOrder?: number
 }
 
 export interface ChampionSkillBlock {
+  /** UUID server (optional — mỗi lần PUT full `skills` có thể tạo id mới). */
+  id?: string
+  /** Nhãn tab (vd. Mặc định, Anh Hùng). */
+  tabLabel: string
+  sortOrder?: number
   name: string
   descriptionTemplate: string
   params: ChampionSkillParamRow[]
@@ -137,12 +187,19 @@ export interface Champion {
   id: string
   name: string
   cost: 1 | 2 | 3 | 4 | 5
-  /** Vai trò / class hiển thị (vd. Đấu Sĩ Vật Lý) — `role_type` BE. */
+  /** Id vai trò — khớp `GameRoleType.id` / cột `role_type` BE. */
   roleType: string
+  /** Tên hiển thị (từ join meta) — optional nếu API không gửi. */
+  roleTypeName?: string
+  /** Màu meta — optional. */
+  roleTypeColor?: string
   contentVersion?: number
   /** Tên tộc/hệ (thứ tự giữ nguyên khi gửi API). */
   traits: string[]
   imageUrl: string
+  /** Một hoặc nhiều kỹ năng (tab). */
+  skills: ChampionSkillBlock[]
+  /** Kỹ năng đầu — trùng `skills[0]` (API/legacy). */
   skill: ChampionSkillBlock
   starStats: ChampionStarStatRow[]
   /** Lõi nâng cấp / ưu tiên augment cho tướng */

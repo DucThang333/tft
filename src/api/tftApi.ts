@@ -12,7 +12,10 @@ import type {
   Composition,
   GameAugment,
   GameEncounter,
+  GameRoleType,
   GameTraitDef,
+  MetaDescriptionParamRow,
+  ScalesWithOption,
   DataVersionOption,
   Trait,
   TrayChampion,
@@ -66,6 +69,12 @@ function withVersionInBody(body: unknown): unknown {
     return {
       ...raw,
       encounter: { ...(raw.encounter as Record<string, unknown>), versionId },
+    }
+  }
+  if (raw.roleType && typeof raw.roleType === 'object') {
+    return {
+      ...raw,
+      roleType: { ...(raw.roleType as Record<string, unknown>), versionId },
     }
   }
   return body
@@ -135,6 +144,13 @@ function parseCombinedItem(raw: Record<string, unknown>): CombinedItem {
     tags: (raw.tags as string[]) ?? [],
     imageUrl: String(raw.imageUrl),
     stats: (raw.stats as { label: string; value: string }[]) ?? [],
+    descriptionParams: parseDescriptionParamsList(raw.descriptionParams ?? raw.description_params),
+    versionId:
+      raw.versionId != null && String(raw.versionId) !== ''
+        ? String(raw.versionId)
+        : raw.version_id != null && String(raw.version_id) !== ''
+          ? String(raw.version_id)
+          : undefined,
   }
 }
 
@@ -213,6 +229,46 @@ function parseBoardBootstrap(json: Record<string, unknown>): BoardBootstrap {
   return { synergies, boardChampions, trayChampions, boardItems }
 }
 
+function parseMetaDescriptionParamRow(
+  row: Record<string, unknown>,
+  defaultOrder: number,
+): MetaDescriptionParamRow {
+  const sw = row.scalesWith ?? row.scales_with
+  return {
+    paramKey: String(row.paramKey ?? row.param_key ?? ''),
+    displayLabel: String(row.displayLabel ?? row.display_label ?? ''),
+    sampleValue: String(row.sampleValue ?? row.sample_value ?? ''),
+    scalesWith: sw != null && String(sw) !== '' ? String(sw) : undefined,
+    sortOrder:
+      row.sortOrder != null
+        ? Number(row.sortOrder)
+        : row.sort_order != null
+          ? Number(row.sort_order)
+          : defaultOrder,
+  }
+}
+
+function parseDescriptionParamsList(raw: unknown): MetaDescriptionParamRow[] {
+  if (!Array.isArray(raw)) return []
+  return raw
+    .map((p, i) =>
+      p != null && typeof p === 'object'
+        ? parseMetaDescriptionParamRow(p as Record<string, unknown>, i)
+        : null,
+    )
+    .filter((x): x is MetaDescriptionParamRow => x != null)
+}
+
+function parseGameRoleType(raw: Record<string, unknown>): GameRoleType {
+  return {
+    id: String(raw.id ?? ''),
+    name: String(raw.name ?? ''),
+    color: String(raw.color ?? '#64748b'),
+    description: String(raw.description ?? ''),
+    descriptionParams: parseDescriptionParamsList(raw.descriptionParams ?? raw.description_params),
+  }
+}
+
 function parseGameTraitDef(raw: Record<string, unknown>): GameTraitDef {
   const kind = raw.kind === 'class' ? 'class' : 'origin'
   return {
@@ -221,6 +277,21 @@ function parseGameTraitDef(raw: Record<string, unknown>): GameTraitDef {
     kind,
     description: raw.description != null ? String(raw.description) : '',
     iconUrl: raw.iconUrl != null ? String(raw.iconUrl) : '',
+    descriptionParams: parseDescriptionParamsList(raw.descriptionParams ?? raw.description_params),
+  }
+}
+
+function parseScalesWithOption(raw: Record<string, unknown>): ScalesWithOption {
+  const tc = raw.textColor ?? raw.text_color
+  const vfRaw = raw.valueFormat ?? raw.value_format
+  const vfStr = vfRaw != null ? String(vfRaw).trim().toLowerCase() : ''
+  const valueFormat = vfStr === 'percent' ? 'percent' : 'flat'
+  return {
+    id: String(raw.id ?? ''),
+    label: String(raw.label ?? ''),
+    iconUrl: raw.iconUrl != null ? String(raw.iconUrl) : '',
+    textColor: tc != null && String(tc).trim() !== '' ? String(tc).trim() : undefined,
+    valueFormat,
   }
 }
 
@@ -234,6 +305,13 @@ function parseGameAugment(raw: Record<string, unknown>): GameAugment {
     tier,
     description: raw.description != null ? String(raw.description) : '',
     imageUrl: raw.imageUrl != null ? String(raw.imageUrl) : '',
+    descriptionParams: parseDescriptionParamsList(raw.descriptionParams ?? raw.description_params),
+    versionId:
+      raw.versionId != null && String(raw.versionId) !== ''
+        ? String(raw.versionId)
+        : raw.version_id != null && String(raw.version_id) !== ''
+          ? String(raw.version_id)
+          : undefined,
   }
 }
 
@@ -243,6 +321,13 @@ function parseGameEncounter(raw: Record<string, unknown>): GameEncounter {
     name: String(raw.name ?? ''),
     description: raw.description != null ? String(raw.description) : '',
     imageUrl: raw.imageUrl != null ? String(raw.imageUrl) : '',
+    descriptionParams: parseDescriptionParamsList(raw.descriptionParams ?? raw.description_params),
+    versionId:
+      raw.versionId != null && String(raw.versionId) !== ''
+        ? String(raw.versionId)
+        : raw.version_id != null && String(raw.version_id) !== ''
+          ? String(raw.version_id)
+          : undefined,
   }
 }
 
@@ -357,7 +442,63 @@ function parseSkillBlock(raw: Record<string, unknown>): ChampionSkillBlock {
       ? String(skillObj.descriptionTemplate)
       : String(raw.skillDescriptionTemplate ?? raw.skill_description_template ?? '')
 
-  return { name, descriptionTemplate, params }
+  return {
+    tabLabel: 'Mặc định',
+    sortOrder: 0,
+    name,
+    descriptionTemplate,
+    params,
+  }
+}
+
+function parseOneSkillBlock(obj: Record<string, unknown>, index: number): ChampionSkillBlock {
+  const paramsRaw = (obj.params as unknown[]) ?? []
+  const params = paramsRaw
+    .map((p, i) =>
+      p != null && typeof p === 'object' ? parseSkillParamRow(p as Record<string, unknown>, i) : null,
+    )
+    .filter((x): x is ChampionSkillParamRow => x != null)
+
+  const so = obj.sortOrder ?? obj.sort_order
+  return {
+    id: obj.id != null && String(obj.id).length > 0 ? String(obj.id) : undefined,
+    tabLabel: String(
+      obj.tabLabel ?? obj.tab_label ?? (index === 0 ? 'Mặc định' : `Kỹ năng ${index + 1}`),
+    ),
+    sortOrder: so != null && so !== '' ? Number(so) : index,
+    name: String(obj.name ?? ''),
+    descriptionTemplate: String(obj.descriptionTemplate ?? obj.description_template ?? ''),
+    params,
+  }
+}
+
+function parseChampionSkills(raw: Record<string, unknown>): ChampionSkillBlock[] {
+  const skillsRaw = raw.skills
+  if (Array.isArray(skillsRaw) && skillsRaw.length > 0) {
+    return skillsRaw.map((el, i) =>
+      el != null && typeof el === 'object'
+        ? parseOneSkillBlock(el as Record<string, unknown>, i)
+        : {
+            tabLabel: i === 0 ? 'Mặc định' : `Kỹ năng ${i + 1}`,
+            sortOrder: i,
+            name: '',
+            descriptionTemplate: '',
+            params: [],
+          },
+    )
+  }
+  return [parseSkillBlock(raw)]
+}
+
+function skillBlockToAdminJson(s: ChampionSkillBlock, index: number): Record<string, unknown> {
+  const tab = s.tabLabel?.trim() || (index === 0 ? 'Mặc định' : `Kỹ năng ${index + 1}`)
+  return {
+    tabLabel: tab,
+    sortOrder: s.sortOrder ?? index,
+    name: s.name,
+    descriptionTemplate: s.descriptionTemplate,
+    params: s.params.map(skillParamToAdminJson),
+  }
 }
 
 function starStatToAdminJson(s: ChampionStarStatRow): Record<string, unknown> {
@@ -390,15 +531,18 @@ function skillParamToAdminJson(p: ChampionSkillParamRow, i: number): Record<stri
 
 /** Payload JSON admin (camelCase) khớp `ChampionController` — dùng cho POST/PUT đầy đủ. */
 export function championToAdminPayload(c: Champion): Record<string, unknown> {
+  const skills = c.skills?.length ? c.skills : [c.skill]
+  const first = skills[0]
   const base: Record<string, unknown> = {
     name: c.name,
     cost: c.cost,
     roleType: c.roleType,
     imageUrl: c.imageUrl,
     traits: c.traits,
-    skillName: c.skill.name,
-    skillDescriptionTemplate: c.skill.descriptionTemplate,
-    skillParams: c.skill.params.map(skillParamToAdminJson),
+    skills: skills.map((s, i) => skillBlockToAdminJson(s, i)),
+    skillName: first?.name ?? '',
+    skillDescriptionTemplate: first?.descriptionTemplate ?? '',
+    skillParams: (first?.params ?? []).map(skillParamToAdminJson),
     starStats: c.starStats.map(starStatToAdminJson),
   }
   if (c.contentVersion != null) base.contentVersion = c.contentVersion
@@ -415,7 +559,15 @@ function championToAdminUpdateBody(c: ChampionAdminPatch): Record<string, unknow
   if (c.imageUrl !== undefined) out.imageUrl = c.imageUrl
   if (c.traits !== undefined) out.traits = c.traits
   if (c.contentVersion !== undefined) out.contentVersion = c.contentVersion
-  if (c.skill !== undefined) {
+  if (c.skills !== undefined) {
+    out.skills = c.skills.map((s, i) => skillBlockToAdminJson(s, i))
+    const f = c.skills[0]
+    if (f) {
+      out.skillName = f.name
+      out.skillDescriptionTemplate = f.descriptionTemplate
+      out.skillParams = f.params.map(skillParamToAdminJson)
+    }
+  } else if (c.skill !== undefined) {
     out.skillName = c.skill.name
     out.skillDescriptionTemplate = c.skill.descriptionTemplate
     out.skillParams = c.skill.params.map(skillParamToAdminJson)
@@ -434,7 +586,14 @@ function parseChampion(raw: Record<string, unknown>): Champion {
 
   const traits = parseTraitDisplayNames(raw.traits)
   const starStats = parseStarStats(raw.starStats)
-  const skill = parseSkillBlock(raw)
+  const skills = parseChampionSkills(raw)
+  const skill = skills[0] ?? {
+    tabLabel: 'Mặc định',
+    sortOrder: 0,
+    name: '',
+    descriptionTemplate: '',
+    params: [],
+  }
   const cv = raw.contentVersion ?? raw.content_version
 
   return {
@@ -442,7 +601,16 @@ function parseChampion(raw: Record<string, unknown>): Champion {
     name: String(raw.name ?? ''),
     cost: safeCost,
     roleType: String(raw.roleType ?? raw.role_type ?? ''),
+    roleTypeName:
+      raw.roleTypeName != null && raw.roleTypeName !== ''
+        ? String(raw.roleTypeName)
+        : undefined,
+    roleTypeColor:
+      raw.roleTypeColor != null && raw.roleTypeColor !== ''
+        ? String(raw.roleTypeColor)
+        : undefined,
     contentVersion: cv != null && cv !== '' ? Number(cv) : undefined,
+    skills,
     traits,
     imageUrl: String(raw.imageUrl ?? raw.image_url ?? ''),
     skill,
@@ -494,11 +662,138 @@ export const tftApi = {
     return (r.traits ?? []).map(parseGameTraitDef)
   },
 
+  async scalesWithOptions(): Promise<ScalesWithOption[]> {
+    const r = await tftGet<{ scalesWithOptions: Record<string, unknown>[] }>(
+      '/api/v1/meta/scales-with',
+      { includeVersion: false },
+    )
+    return (r.scalesWithOptions ?? []).map(parseScalesWithOption)
+  },
+
+  async gameRoleTypes(): Promise<GameRoleType[]> {
+    const r = await tftGet<{ roleTypes: Record<string, unknown>[] }>('/api/v1/meta/role-types', {
+      includeVersion: false,
+    })
+    return (r.roleTypes ?? []).map(parseGameRoleType)
+  },
+
+  async createGameRoleType(row: GameRoleType): Promise<GameRoleType> {
+    const res = await tftWrite<{ roleType: Record<string, unknown> }>(
+      'POST',
+      '/api/v1/admin/meta/role-types',
+      {
+        roleType: {
+          id: row.id,
+          name: row.name,
+          color: row.color,
+          description: row.description,
+          descriptionParams: row.descriptionParams,
+        },
+      },
+    )
+    return parseGameRoleType(res.roleType)
+  },
+
+  async updateGameRoleType(row: GameRoleType): Promise<GameRoleType> {
+    const id = encodeURIComponent(row.id)
+    const res = await tftWrite<{ roleType: Record<string, unknown> }>(
+      'PUT',
+      `/api/v1/admin/meta/role-types/${id}`,
+      {
+        roleType: {
+          name: row.name,
+          color: row.color,
+          description: row.description,
+          descriptionParams: row.descriptionParams,
+        },
+      },
+    )
+    return parseGameRoleType(res.roleType)
+  },
+
+  async removeGameRoleType(id: string): Promise<void> {
+    const sid = encodeURIComponent(id)
+    await tftWrite<void>('DELETE', `/api/v1/admin/meta/role-types/${sid}`)
+  },
+
+  async createScalesWithOption(opt: ScalesWithOption): Promise<ScalesWithOption> {
+    const body: Record<string, unknown> = {
+      id: opt.id,
+      label: opt.label,
+      iconUrl: opt.iconUrl,
+      valueFormat: opt.valueFormat === 'percent' ? 'percent' : 'flat',
+    }
+    if (opt.textColor != null && opt.textColor.trim() !== '') body.textColor = opt.textColor.trim()
+    const res = await tftWrite<{ scalesWithOption: Record<string, unknown> }>(
+      'POST',
+      '/api/v1/admin/meta/scales-with',
+      { scalesWithOption: body },
+    )
+    return parseScalesWithOption(res.scalesWithOption)
+  },
+
+  async updateScalesWithOption(opt: ScalesWithOption): Promise<ScalesWithOption> {
+    const id = encodeURIComponent(opt.id)
+    const body: Record<string, unknown> = {
+      label: opt.label,
+      iconUrl: opt.iconUrl,
+      valueFormat: opt.valueFormat === 'percent' ? 'percent' : 'flat',
+    }
+    if (opt.textColor != null && opt.textColor.trim() !== '') {
+      body.textColor = opt.textColor.trim()
+    } else {
+      body.textColor = ''
+    }
+    const res = await tftWrite<{ scalesWithOption: Record<string, unknown> }>(
+      'PUT',
+      `/api/v1/admin/meta/scales-with/${id}`,
+      { scalesWithOption: body },
+    )
+    return parseScalesWithOption(res.scalesWithOption)
+  },
+
+  async removeScalesWithOption(id: string): Promise<void> {
+    const sid = encodeURIComponent(id)
+    await tftWrite<void>('DELETE', `/api/v1/admin/meta/scales-with/${sid}`)
+  },
+
   async gameVersions(): Promise<DataVersionOption[]> {
     const r = await tftGet<{ versions: Record<string, unknown>[] }>('/api/v1/meta/versions', {
       includeVersion: false,
     })
     return (r.versions ?? []).map(parseDataVersionOption).filter((v) => v.value.length > 0)
+  },
+
+  /**
+   * Chuyển `version_id` theo từng nhóm (`entities`) từ phiên bản nguồn sang đích.
+   * Khóa hợp lệ: champions, traits, baseItems, combinedItems, augments, encounters
+   */
+  async migrateVersionData(
+    fromVersionId: string,
+    toVersionId: string,
+    entities: string[],
+  ): Promise<{
+    champions: number
+    traits: number
+    baseItems: number
+    combinedItems: number
+    augments: number
+    encounters: number
+  }> {
+    const res = await tftWrite<{
+      ok?: boolean
+      migrated?: {
+        champions: number
+        traits: number
+        baseItems: number
+        combinedItems: number
+        augments: number
+        encounters: number
+      }
+    }>('POST', '/api/v1/admin/meta/migrate-version', { fromVersionId, toVersionId, entities })
+    const m = res?.migrated
+    if (!m) throw new Error('Đồng bộ: phản hồi không hợp lệ.')
+    return m
   },
 
   async createGameTraitDef(trait: GameTraitDef): Promise<GameTraitDef> {

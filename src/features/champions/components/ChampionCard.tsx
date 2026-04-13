@@ -1,4 +1,5 @@
 import type { Champion } from '../../../types'
+import { CHAMPION_SPLASH_ASPECT_CLASS } from '../championVisual'
 import { CostBadge } from '../../../components/ui/CostBadge'
 
 interface ChampionCardProps {
@@ -8,7 +9,7 @@ interface ChampionCardProps {
 export function ChampionCard({ champion }: ChampionCardProps) {
   return (
     <div className="group relative bg-surface-container-low rounded-xl overflow-hidden transition-all duration-500 hover:-translate-y-2 border-t border-outline-variant/20 hover:shadow-[0_0_20px_rgba(223,183,255,0.15)]">
-      <div className="aspect-[4/5] relative overflow-hidden">
+      <div className={`${CHAMPION_SPLASH_ASPECT_CLASS} relative w-full overflow-hidden`}>
         <img
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           src={champion.imageUrl}

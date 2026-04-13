@@ -4,6 +4,7 @@ import { Command } from 'cmdk'
 import { useNavigate } from 'react-router-dom'
 import { tftApi } from '../../api/tftApi'
 import type { BaseItem, Champion, CombinedItem } from '../../types'
+import { CHAMPION_SPLASH_ASPECT_CLASS } from '../../features/champions/championVisual'
 import { Icon } from '../ui/Icon'
 
 interface SearchCommandPaletteProps {
@@ -125,20 +126,24 @@ export function SearchCommandPalette({ open, onOpenChange }: SearchCommandPalett
                   {cache.champions.map((c) => (
                     <Command.Item
                       key={c.id}
-                      value={`${c.name} ${c.roleType} ${c.traits.join(' ')} tướng`}
+                      value={`${c.name} ${c.roleType} ${c.roleTypeName ?? ''} ${c.traits.join(' ')} tướng`}
                       onSelect={() => go(`/champions?q=${encodeURIComponent(c.name)}`)}
                       className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-sm aria-selected:bg-surface-container-high aria-selected:text-primary"
                     >
-                      <img
-                        src={c.imageUrl}
-                        alt=""
-                        className="h-9 w-9 rounded-md object-cover"
-                        loading="lazy"
-                      />
+                      <div
+                        className={`h-9 w-auto ${CHAMPION_SPLASH_ASPECT_CLASS} shrink-0 overflow-hidden rounded-md`}
+                      >
+                        <img
+                          src={c.imageUrl}
+                          alt=""
+                          className="h-full w-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
                       <div>
                         <div className="font-headline font-semibold">{c.name}</div>
                         <div className="text-[10px] text-on-surface-variant">
-                          {c.traits.slice(0, 3).join(' · ')}
+                          {(c.roleTypeName ?? c.roleType) || '—'} · {c.traits.slice(0, 3).join(' · ')}
                         </div>
                       </div>
                     </Command.Item>

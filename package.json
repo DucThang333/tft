@@ -11,8 +11,14 @@
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
+    "@tiptap/extension-link": "^3.22.3",
+    "@tiptap/pm": "^3.22.3",
+    "@tiptap/react": "^3.22.3",
+    "@tiptap/starter-kit": "^3.22.3",
     "antd": "^6.3.5",
     "cmdk": "^1.1.1",
+    "dompurify": "^3.3.3",
+    "html-react-parser": "^6.0.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.2"
@@ -21,6 +27,7 @@
     "@eslint/js": "^9.39.4",
     "@tailwindcss/forms": "^0.5.11",
     "@tailwindcss/vite": "^4.2.2",
+    "@types/dompurify": "^3.0.5",
     "@types/node": "^24.12.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

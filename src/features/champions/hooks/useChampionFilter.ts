@@ -19,6 +19,7 @@ export function useChampionFilter(champions: Champion[], textQuery = '') {
         (c) =>
           c.name.toLowerCase().includes(q) ||
           c.roleType.toLowerCase().includes(q) ||
+          (c.roleTypeName?.toLowerCase().includes(q) ?? false) ||
           c.traits.some((t) => t.toLowerCase().includes(q)),
       )
     }

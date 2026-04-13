@@ -1,3 +1,4 @@
+import { CHAMPION_SPLASH_ASPECT_CLASS } from '../../champions/championVisual'
 import type { Composition } from '../../../types'
 
 interface CompCardProps {
@@ -65,9 +66,13 @@ export function CompCard({ comp, variant }: CompCardProps) {
               <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
                 {comp.champions.map((champ, i) => (
                   <div key={champ.name} className="relative group/champ cursor-pointer">
-                    <div className={`w-full aspect-square rounded-lg bg-surface-container-highest overflow-hidden border-2 transition-all duration-300 ${
-                      i === 0 ? 'border-primary/40 group-hover/champ:border-primary' : 'border-outline-variant/30 hover:border-primary/50'
-                    }`}>
+                    <div
+                      className={`w-full ${CHAMPION_SPLASH_ASPECT_CLASS} rounded-lg bg-surface-container-highest overflow-hidden border-2 transition-all duration-300 ${
+                        i === 0
+                          ? 'border-primary/40 group-hover/champ:border-primary'
+                          : 'border-outline-variant/30 hover:border-primary/50'
+                      }`}
+                    >
                       <img
                         className="w-full h-full object-cover transform group-hover/champ:scale-110 transition-transform duration-500"
                         src={champ.imageUrl}

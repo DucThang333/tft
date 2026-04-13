@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Input, Space, Typography } from 'antd'
+import { extractDescriptionTemplateKeys } from '../../utils/descriptionTemplateKeys'
 
 export interface DescriptionTemplateFieldProps {
   value: string
@@ -9,16 +10,6 @@ export interface DescriptionTemplateFieldProps {
   rows?: number
 }
 
-function extractTemplateKeys(text: string): string[] {
-  const keys = new Set<string>()
-  const re = /\{\{\s*([a-zA-Z0-9_.-]+)\s*\}\}/g
-  let m: RegExpExecArray | null
-  while ((m = re.exec(text)) !== null) {
-    if (m[1]) keys.add(m[1])
-  }
-  return Array.from(keys)
-}
-
 export function DescriptionTemplateField({
   value,
   onChange,
@@ -26,7 +17,7 @@ export function DescriptionTemplateField({
   placeholder,
   rows = 5,
 }: DescriptionTemplateFieldProps) {
-  const keys = useMemo(() => extractTemplateKeys(value), [value])
+  const keys = useMemo(() => extractDescriptionTemplateKeys(value), [value])
   const [samples, setSamples] = useState<Record<string, string>>({})
 
   useEffect(() => {
@@ -61,12 +52,6 @@ export function DescriptionTemplateField({
           placeholder={placeholder}
         />
       </div>
-
-      <Typography.Text type="secondary" className="text-[11px]">
-        Hỗ trợ template theo dạng <Typography.Text code>{'{{key}}'}</Typography.Text> (ví dụ:{' '}
-        <Typography.Text code>{'{{damage}}'}</Typography.Text>,{' '}
-        <Typography.Text code>{'{{duration}}'}</Typography.Text>).
-      </Typography.Text>
 
       {keys.length > 0 ? (
         <div className="space-y-2 rounded-md border border-outline-variant/20 p-3 bg-surface-container-low/30">

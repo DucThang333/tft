@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { Icon } from '../../../components/ui/Icon'
+import { CHAMPION_SPLASH_ASPECT_CLASS } from '../../champions/championVisual'
 import { ApiStatus } from '../../../components/ui/ApiStatus'
 import { tftApi } from '../../../api/tftApi'
 import { usePromiseData } from '../../../hooks/usePromiseData'
@@ -29,7 +30,7 @@ function AdminChampionTile({ champion }: { champion: Champion }) {
 
   return (
     <div className="bg-surface-container group hover:-translate-y-1 transition-all duration-300">
-      <div className="aspect-square relative overflow-hidden">
+      <div className={`${CHAMPION_SPLASH_ASPECT_CLASS} relative w-full overflow-hidden`}>
         <img
           alt=""
           className="w-full h-full object-cover scale-110 group-hover:scale-125 transition-transform duration-700"

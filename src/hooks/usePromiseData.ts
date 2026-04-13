@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useDataVersion } from '../state/dataVersion'
 
 export interface PromiseDataState<T> {
   data: T | null
@@ -6,10 +7,19 @@ export interface PromiseDataState<T> {
   error: Error | null
 }
 
+export type UsePromiseDataOptions = {
+  /** Mặc định false: mỗi lần đổi phiên bản dữ liệu (top bar) sẽ gọi lại factory */
+  skipVersion?: boolean
+}
+
 export function usePromiseData<T>(
   factory: () => Promise<T>,
   deps: readonly unknown[],
+  options?: UsePromiseDataOptions,
 ): PromiseDataState<T> {
+  const { value: dataVersion } = useDataVersion()
+  const effectDeps = options?.skipVersion ? deps : [...deps, dataVersion]
+
   const [state, setState] = useState<PromiseDataState<T>>({
     data: null,
     loading: true,
@@ -40,7 +50,7 @@ export function usePromiseData<T>(
     return () => {
       cancelled = true
     }
-  }, deps)
+  }, effectDeps)
 
   return state
 }

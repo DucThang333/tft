@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
-import { App, Button, Card, Col, Collapse, Input, List, Row, Space, Typography } from 'antd'
+import { App, Button, Card, Col, Collapse, Input, List, Popconfirm, Row, Space, Typography } from 'antd'
 import { tftApi } from '../../../../api/tftApi'
 import { usePromiseData } from '../../../../hooks/usePromiseData'
 import { AdminMetaDescriptionParamsEditor } from '../../components/AdminMetaDescriptionParamsEditor'
@@ -11,27 +11,27 @@ import {
 import { AdminRichDescriptionSection } from '../../components/AdminRichDescriptionSection'
 import { fieldFilled, mergeStats } from '../../components/adminFormFieldStats'
 import { buildScalesWithVisualMaps } from '../../utils/scalesWithVisualMaps'
-import type { GameEncounter } from '../../../../types'
+import type { GameRoleType } from '../../../../types'
 
-function emptyEncounter(): GameEncounter {
+function emptyRole(): GameRoleType {
   return {
     id: '',
     name: '',
+    color: '#64748b',
     description: '',
-    imageUrl: '',
     descriptionParams: [],
   }
 }
 
-export function EncounterTabPanel() {
+export function RoleTypeTabPanel() {
   const { message } = App.useApp()
   const [tick, setTick] = useState(0)
-  const { data, loading, error } = usePromiseData(() => tftApi.gameEncounters(), [tick])
+  const { data, loading, error } = usePromiseData(() => tftApi.gameRoleTypes(), [tick])
   const { data: scalesWithOpts } = usePromiseData(() => tftApi.scalesWithOptions(), [tick])
   const list = data ?? []
 
   const [isNew, setIsNew] = useState(true)
-  const [draft, setDraft] = useState<GameEncounter>(emptyEncounter)
+  const [draft, setDraft] = useState<GameRoleType>(emptyRole)
   const [q, setQ] = useState('')
   const [saving, setSaving] = useState(false)
   const [descKey, setDescKey] = useState(0)
@@ -40,14 +40,15 @@ export function EncounterTabPanel() {
     const s = q.trim().toLowerCase()
     if (!s) return list
     return list.filter(
-      (x) =>
-        x.name.toLowerCase().includes(s) ||
-        x.id.toLowerCase().includes(s) ||
-        x.description.toLowerCase().includes(s),
+      (r) =>
+        r.id.toLowerCase().includes(s) ||
+        r.name.toLowerCase().includes(s) ||
+        r.description.toLowerCase().includes(s) ||
+        r.color.toLowerCase().includes(s),
     )
   }, [list, q])
 
-  const refresh = useCallback(() => setTick((t) => t + 1), [])
+  const refresh = useCallback(() => setTick((x) => x + 1), [])
 
   const { scalesWithIconById, scalesWithTextColorById, scalesWithValueFormatById } = useMemo(
     () => buildScalesWithVisualMaps(scalesWithOpts),
@@ -73,9 +74,12 @@ export function EncounterTabPanel() {
   }, [scalesWithOpts, draft.descriptionParams])
 
   const basicStats = useMemo(() => {
-    const filled = (fieldFilled(draft.id) ? 1 : 0) + (fieldFilled(draft.name) ? 1 : 0)
-    return { filled, total: 2 }
-  }, [draft.id, draft.name])
+    const filled =
+      (fieldFilled(draft.id) ? 1 : 0) +
+      (fieldFilled(draft.name) ? 1 : 0) +
+      (fieldFilled(draft.color) ? 1 : 0)
+    return { filled, total: 3 }
+  }, [draft.id, draft.name, draft.color])
 
   const descStats = useMemo(
     () => ({ filled: fieldFilled(draft.description) ? 1 : 0, total: 1 }),
@@ -94,30 +98,26 @@ export function EncounterTabPanel() {
     return { filled, total: rows.length }
   }, [draft.descriptionParams])
 
-  const imageStats = useMemo(
-    () => ({ filled: fieldFilled(draft.imageUrl) ? 1 : 0, total: 1 }),
-    [draft.imageUrl],
-  )
-
   const formProgress = useMemo(
-    () => mergeStats(basicStats, descStats, descParamsStats, imageStats),
-    [basicStats, descStats, descParamsStats, imageStats],
+    () => mergeStats(basicStats, descStats, descParamsStats),
+    [basicStats, descStats, descParamsStats],
   )
 
   const startNew = useCallback(() => {
     setIsNew(true)
-    setDraft(emptyEncounter())
+    setDraft(emptyRole())
     setDescKey((k) => k + 1)
   }, [])
 
-  const select = useCallback((x: GameEncounter) => {
+  const select = useCallback((r: GameRoleType) => {
     setIsNew(false)
-    setDraft({ ...x, descriptionParams: x.descriptionParams ?? [] })
+    setDraft({ ...r, descriptionParams: r.descriptionParams ?? [] })
     setDescKey((k) => k + 1)
   }, [])
 
   const save = async () => {
-    if (!draft.id.trim()) {
+    const id = draft.id.trim().toLowerCase()
+    if (!id) {
       message.error('Mã (id) là bắt buộc.')
       return
     }
@@ -128,11 +128,11 @@ export function EncounterTabPanel() {
     setSaving(true)
     try {
       if (isNew) {
-        await tftApi.createGameEncounter(draft)
-        message.success('Đã tạo kỳ ngộ.')
+        await tftApi.createGameRoleType({ ...draft, id })
+        message.success('Đã tạo vai trò.')
         startNew()
       } else {
-        const u = await tftApi.updateGameEncounter(draft)
+        const u = await tftApi.updateGameRoleType({ ...draft, id: draft.id.trim().toLowerCase() })
         setDraft(u)
         message.success('Đã cập nhật.')
       }
@@ -144,6 +144,18 @@ export function EncounterTabPanel() {
     }
   }
 
+  const remove = async () => {
+    if (isNew || !draft.id.trim()) return
+    try {
+      await tftApi.removeGameRoleType(draft.id.trim())
+      message.success('Đã xóa.')
+      startNew()
+      refresh()
+    } catch (e) {
+      message.error(e instanceof Error ? e.message : 'Xóa thất bại.')
+    }
+  }
+
   return (
     <Row gutter={[24, 24]}>
       <Col xs={24} lg={9}>
@@ -152,7 +164,7 @@ export function EncounterTabPanel() {
             <Button type="primary" onClick={startNew}>
               Tạo mới
             </Button>
-            <Input.Search allowClear placeholder="Tìm kỳ ngộ…" onChange={(e) => setQ(e.target.value)} />
+            <Input.Search allowClear placeholder="Tìm id, tên, màu, mô tả…" onChange={(e) => setQ(e.target.value)} />
           </Space>
           {error ? (
             <Typography.Text type="danger">{error.message}</Typography.Text>
@@ -177,12 +189,16 @@ export function EncounterTabPanel() {
               >
                 <List.Item.Meta
                   avatar={
-                    item.imageUrl ? (
-                      <img src={item.imageUrl} alt="" className="h-10 w-10 rounded object-cover" />
-                    ) : undefined
+                    <span
+                      className="inline-block h-9 w-9 rounded-md border border-outline-variant/30 shrink-0"
+                      style={{ backgroundColor: item.color }}
+                      aria-hidden
+                    />
                   }
                   title={item.name}
-                  description={<span className="text-on-surface-variant">{item.id}</span>}
+                  description={
+                    <span className="text-on-surface-variant font-mono text-[11px]">{item.id}</span>
+                  }
                 />
               </List.Item>
             )}
@@ -192,7 +208,7 @@ export function EncounterTabPanel() {
       <Col xs={24} lg={15}>
         <Card
           size="small"
-          title={isNew ? 'Thêm kỳ ngộ' : 'Cập nhật kỳ ngộ'}
+          title={isNew ? 'Thêm vai trò' : 'Cập nhật vai trò'}
           extra={<AdminFormCardProgress filled={formProgress.filled} total={formProgress.total} />}
         >
           <Space direction="vertical" size="middle" className="w-full">
@@ -220,17 +236,37 @@ export function EncounterTabPanel() {
                           disabled={!isNew}
                           value={draft.id}
                           onChange={(e) => setDraft((d) => ({ ...d, id: e.target.value }))}
-                          placeholder="vd. portal_treasure"
+                          placeholder="vd. fighter_ad"
                         />
                       </div>
-                      <div className="min-w-[200px] flex-[2]">
+                      <div className="min-w-[200px] flex-1">
                         <Typography.Text type="secondary" className="text-xs block mb-1">
-                          Tên hiển thị
+                          Tên
                         </Typography.Text>
                         <Input
                           value={draft.name}
                           onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))}
                         />
+                      </div>
+                      <div className="min-w-[140px]">
+                        <Typography.Text type="secondary" className="text-xs block mb-1">
+                          Màu
+                        </Typography.Text>
+                        <Space.Compact className="w-full">
+                          <input
+                            type="color"
+                            value={draft.color.match(/^#[0-9A-Fa-f]{6}$/) ? draft.color : '#64748b'}
+                            onChange={(e) => setDraft((d) => ({ ...d, color: e.target.value }))}
+                            className="h-8 w-12 cursor-pointer rounded-l border border-outline-variant/40 bg-surface-container-lowest p-0.5"
+                            aria-label="Chọn màu"
+                          />
+                          <Input
+                            value={draft.color}
+                            onChange={(e) => setDraft((d) => ({ ...d, color: e.target.value }))}
+                            placeholder="#64748b"
+                            className="min-w-0 flex-1"
+                          />
+                        </Space.Compact>
                       </div>
                     </Space>
                   ),
@@ -238,17 +274,25 @@ export function EncounterTabPanel() {
                 {
                   key: 'rich-desc',
                   label: (
-                    <AdminFormCollapseLabel title="Mô tả" filled={descStats.filled} total={descStats.total} />
+                    <AdminFormCollapseLabel title="Mô tả (rich text)" filled={descStats.filled} total={descStats.total} />
                   ),
                   children: (
                     <AdminRichDescriptionSection
-                      sectionTitle="Mô tả"
                       editorKey={descKey}
                       value={draft.description}
                       onChange={(description) => setDraft((d) => ({ ...d, description }))}
                       previewTitle={draft.name}
                       previewSubtitle={draft.id}
-                      previewImageUrl={draft.imageUrl}
+                      previewRightSlot={
+                        <span className="inline-flex items-center gap-1.5 rounded px-2 py-0.5 border border-white/10 bg-black/30">
+                          <span
+                            className="w-3 h-3 rounded-sm border border-white/20 shrink-0"
+                            style={{ backgroundColor: draft.color }}
+                            aria-hidden
+                          />
+                          <span className="text-[11px] font-mono text-[#e8eaed] tabular-nums">{draft.color}</span>
+                        </span>
+                      }
                       structuredDescriptionParams={draft.descriptionParams}
                       scalesWithIconById={scalesWithIconById}
                       scalesWithTextColorById={scalesWithTextColorById}
@@ -274,39 +318,26 @@ export function EncounterTabPanel() {
                     />
                   ),
                 },
-                {
-                  key: 'image',
-                  label: (
-                    <AdminFormCollapseLabel title="Ảnh / icon (URL)" filled={imageStats.filled} total={imageStats.total} />
-                  ),
-                  children: (
-                    <Space direction="vertical" size="small" className="w-full">
-                      <div className="w-full">
-                        <Typography.Text type="secondary" className="text-xs block mb-1">
-                          URL ảnh / icon
-                        </Typography.Text>
-                        <Input
-                          value={draft.imageUrl}
-                          onChange={(e) => setDraft((d) => ({ ...d, imageUrl: e.target.value }))}
-                        />
-                      </div>
-                      {draft.imageUrl ? (
-                        <img
-                          src={draft.imageUrl}
-                          alt=""
-                          className="h-16 w-16 rounded border border-outline-variant/20 object-cover"
-                        />
-                      ) : null}
-                    </Space>
-                  ),
-                },
               ]}
             />
-            <Space>
+            <Space wrap>
               <Button type="primary" loading={saving} onClick={save}>
                 {isNew ? 'Tạo' : 'Cập nhật'}
               </Button>
-              {!isNew ? <Button onClick={startNew}>Tạo mới khác</Button> : null}
+              {!isNew ? (
+                <>
+                  <Button onClick={startNew}>Tạo mới khác</Button>
+                  <Popconfirm
+                    title="Xóa vai trò này?"
+                    description="Chỉ xóa được khi không còn tướng nào dùng id này."
+                    onConfirm={remove}
+                    okText="Xóa"
+                    cancelText="Hủy"
+                  >
+                    <Button danger>Xóa</Button>
+                  </Popconfirm>
+                </>
+              ) : null}
             </Space>
           </Space>
         </Card>
